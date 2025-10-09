@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'user_accounts' => [
+            'driver' => 'session',
+            'provider' => 'user_accounts',
+        ],
     ],
 
     /*
@@ -65,6 +70,11 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
+        'user_accounts' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserAccount::class,
+        ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -87,13 +97,19 @@ return [
     | The throttle setting is the number of seconds a user must wait before
     | generating more password reset tokens. This prevents the user from
     | quickly generating a very large amount of password reset tokens.
-    |
     */
 
     'passwords' => [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'user_accounts' => [
+            'provider' => 'user_accounts',
+            'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

@@ -106,8 +106,32 @@
                                 </div>
                                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                                     <div class="d-flex mb-3">
-                                        <a class="btn btn-light btn-square me-3" href=""><i class="far fa-heart text-primary"></i></a>
-                                        <a class="btn btn-primary" href="{{ route('job.detail', $job->id) }}">Details</a>
+                                        @auth('user_accounts')
+                                            <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}" class="me-3">
+                                                @csrf
+                                                <button type="submit" class="btn btn-light btn-square">
+                                                    @if($user && $user->favorites->contains($job->id))
+                                                        <i class="fas fa-heart text-danger"></i>
+                                                    @else
+                                                        <i class="far fa-heart text-primary"></i>
+                                                    @endif
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary">
+                                                    @if($user && $user->applied->contains($job->id))
+                                                        Marked Applied
+                                                    @else
+                                                        Mark as Applied
+                                                    @endif
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('login') }}" class="btn btn-light btn-square me-3" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
+                                            <a href="{{ route('login') }}" class="btn btn-primary" onclick="alert('Silakan login untuk menandai job sebagai applied.')">Mark as Applied</a>
+                                        @endauth
+                                        <a class="btn btn-primary ms-3" href="{{ route('job.detail', $job->id) }}">Details</a>
                                     </div>
                                     <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Date Line: {{ $job->deadline ? $job->deadline->format('d M, Y') : 'N/A' }}</small>
                                 </div>

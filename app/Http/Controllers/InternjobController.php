@@ -58,13 +58,16 @@ class InternjobController extends Controller
             'Fakultas Agama Islam' => 'fa-mosque',
         ];
 
-        return view('welcome', compact('jobs', 'faculties', 'category_counts', 'icons'));
+        $user = auth('user_accounts')->user();
+
+        return view('welcome', compact('jobs', 'faculties', 'category_counts', 'icons', 'user'));
     }
 
     public function show($id)
     {
         $job = internjob::findOrFail($id);
-        return view('job-detail', compact('job'));
+        $user = auth('user_accounts')->user();
+        return view('job-detail', compact('job', 'user'));
     }
 
     public function jobs(Request $request)
@@ -109,14 +112,53 @@ class InternjobController extends Controller
             'Fakultas Teknik' => 'fa-cogs',
             'Fakultas Ekonomi dan Bisnis' => 'fa-chart-line',
             'Fakultas Ilmu Komputer' => 'fa-laptop-code',
-            'Fakultas Hukum' => 'fa-gavel',
-            'Fakultas Kesehatan' => 'fa-heartbeat',
+            'Fakultas Hukum' => 'fa-heartbeat',
             'Fakultas Pertanian' => 'fa-leaf',
             'Fakultas Ilmu Sosial dan Politik' => 'fa-users',
             'Fakultas Keguruan dan Ilmu Pendidikan' => 'fa-graduation-cap',
             'Fakultas Agama Islam' => 'fa-mosque',
         ];
 
-        return view('jobs', compact('jobs', 'faculties', 'category_counts', 'icons'));
+        $user = auth('user_accounts')->user();
+
+        return view('jobs', compact('jobs', 'faculties', 'category_counts', 'icons', 'user'));
+    }
+
+    public function toggleFavorite($id)
+    {
+        $user = auth('user_accounts')->user();
+        if (!$user) {
+            return back()->with('error', 'Silakan login untuk menambahkan job ke favorit.');
+        }
+        $job = internjob::findOrFail($id);
+
+        if ($user->favorites()->where('internjob_id', $id)->exists()) {
+            $user->favorites()->detach($id);
+            $message = 'Job removed from favorites.';
+        } else {
+            $user->favorites()->attach($id);
+            $message = 'Job added to favorites.';
+        }
+
+        return back()->with('success', $message);
+    }
+
+    public function toggleApplied($id)
+    {
+        $user = auth('user_accounts')->user();
+        if (!$user) {
+            return back()->with('error', 'Silakan login untuk menandai job sebagai applied.');
+        }
+        $job = internjob::findOrFail($id);
+
+        if ($user->applied()->where('internjob_id', $id)->exists()) {
+            $user->applied()->detach($id);
+            $message = 'Job unmarked as applied.';
+        } else {
+            $user->applied()->attach($id, ['applied_at' => now()]);
+            $message = 'Job marked as applied.';
+        }
+
+        return back()->with('success', $message);
     }
 }

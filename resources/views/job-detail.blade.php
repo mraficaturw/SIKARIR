@@ -50,12 +50,38 @@
                     @endif
                     <div class="row g-3 mt-3">
                         <div class="col-12">
-                            <button class="btn btn-success w-100" type="button">Mark as Applied</button>
+                            @auth('user_accounts')
+                                <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success w-100">
+                                        @if($user && $user->applied->contains($job->id))
+                                            Marked Applied
+                                        @else
+                                            Mark as Applied
+                                        @endif
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-success w-100" onclick="alert('Silakan login untuk menandai job sebagai applied.')">Mark as Applied</a>
+                            @endauth
                         </div>
                     </div>
                     <div class="d-flex justify-content-start align-items-center mt-4 gap-3">
                         <a class="btn btn-outline-primary" href="{{ route('jobs') }}">Back to Jobs</a>
-                        <a class="btn btn-light btn-square" href=""><i class="far fa-heart text-primary"></i></a>
+                        @auth('user_accounts')
+                            <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-light btn-square">
+                                    @if($user && $user->favorites->contains($job->id))
+                                        <i class="fas fa-heart text-danger"></i>
+                                    @else
+                                        <i class="far fa-heart text-primary"></i>
+                                    @endif
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-light btn-square" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
+                        @endauth
                     </div>
                 </div>
             </div>

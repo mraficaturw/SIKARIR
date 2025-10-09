@@ -19,7 +19,24 @@
         <div class="navbar-nav ms-auto p-4 p-lg-0">
             <a href="{{ route('welcome') }}" class="nav-item nav-link @if(request()->routeIs('welcome')) active @endif">Home</a>
         </div>
-        <a href="" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Login<i class="fa fa-arrow-right ms-3"></i></a>
+        @auth('user_accounts')
+            <div class="nav-item dropdown d-none d-lg-block">
+                <a class="btn btn-primary rounded-0 py-4 px-lg-5 dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ auth('user_accounts')->user()->name }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="{{ route('profile.show') }}">Profile</a></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        @else
+            <a href="{{ route('login') }}" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Login<i class="fa fa-arrow-right ms-3"></i></a>
+        @endauth
     </div>
 </nav>
 <!-- Navbar End -->
