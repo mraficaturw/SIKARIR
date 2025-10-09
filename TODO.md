@@ -1,0 +1,2 @@
+- [x] Add placeholders with examples to all form fields in InternjobForm.php
+- [x] Add hint for recommended logo size in InternjobForm.php
