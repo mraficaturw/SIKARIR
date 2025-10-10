@@ -20,31 +20,37 @@
     <div class="container">
         <div class="row g-5">
             <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="job-detail bg-light rounded p-5">
-                    <h2>{{ $job->title }}</h2>
-                    <p class="mb-3"><i class="fa fa-building text-primary me-2"></i>{{ $job->company }}</p>
-                    <p class="mb-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>Location: {{ $job->location ?? 'Not specified' }}</p>
-                    <p class="mb-3"><i class="fa fa-graduation-cap text-primary me-2"></i>Category: {{ $job->category }}</p>
-                    <p class="mb-3"><i class="fa fa-calendar text-primary me-2"></i>Posted: {{ $job->created_at->format('M d, Y') }}</p>
-                    <h4>Description</h4>
-                    <p>{{ $job->description }}</p>
+                <div class="bg-white rounded shadow-sm p-5 border">
+                    <h2 class="fw-semibold mb-4">{{ $job->title }}</h2>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-2"><i class="fa fa-building text-primary me-2"></i><strong>Company:</strong> <span class="text-muted">{{ $job->company }}</span></p>
+                            <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-2"></i><strong>Location:</strong> <span class="text-muted">{{ $job->location ?? 'Not specified' }}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><i class="fa fa-graduation-cap text-primary me-2"></i><strong>Category:</strong> <span class="text-muted">{{ $job->category }}</span></p>
+                            <p class="mb-2"><i class="fa fa-calendar text-primary me-2"></i><strong>Posted:</strong> <span class="text-muted">{{ $job->created_at->format('M d, Y') }}</span></p>
+                        </div>
+                    </div>
+                    <h4 class="fw-semibold mb-3">Description</h4>
+                    <p class="text-muted mb-4">{{ $job->description }}</p>
                     @if($job->requirements)
-                    <h4>Requirements</h4>
-                    <p>{{ $job->requirements }}</p>
+                    <h4 class="fw-semibold mb-3">Requirements</h4>
+                    <p class="text-muted mb-4">{{ $job->requirements }}</p>
                     @endif
                     @if($job->apply_url)
-                    <h4>How to Apply</h4>
+                    <h4 class="fw-semibold mb-3">How to Apply</h4>
                     <p><a href="{{ $job->apply_url }}" target="_blank" class="btn btn-primary">Apply Here</a></p>
                     @endif
                 </div>
             </div>
             <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="bg-light rounded p-5 mb-4">
-                    <h4 class="mb-4">Job Summary</h4>
-                    <p><i class="fa fa-building text-primary me-2"></i><strong>Company:</strong> {{ $job->company }}</p>
-                    <p><i class="fa fa-map-marker-alt text-primary me-2"></i><strong>Location:</strong> {{ $job->location ?? 'Not specified' }}</p>
-                    <p><i class="fa fa-graduation-cap text-primary me-2"></i><strong>Category:</strong> {{ $job->category }}</p>
-                    <p><i class="fa fa-calendar text-primary me-2"></i><strong>Posted:</strong> {{ $job->created_at->format('M d, Y') }}</p>
+                <div class="bg-white rounded shadow-sm p-4 border mb-4">
+                    <h4 class="fw-semibold mb-4">Job Summary</h4>
+                    <p class="mb-3"><i class="fa fa-building text-primary me-2"></i><strong>Company:</strong> <span class="text-muted">{{ $job->company }}</span></p>
+                    <p class="mb-3"><i class="fa fa-map-marker-alt text-primary me-2"></i><strong>Location:</strong> <span class="text-muted">{{ $job->location ?? 'Not specified' }}</span></p>
+                    <p class="mb-3"><i class="fa fa-graduation-cap text-primary me-2"></i><strong>Category:</strong> <span class="text-muted">{{ $job->category }}</span></p>
+                    <p class="mb-3"><i class="fa fa-calendar text-primary me-2"></i><strong>Posted:</strong> <span class="text-muted">{{ $job->created_at->format('M d, Y') }}</span></p>
                 </div>
             </div>
         </div>

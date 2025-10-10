@@ -18,6 +18,7 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto p-4 p-lg-0">
             <a href="{{ route('welcome') }}" class="nav-item nav-link @if(request()->routeIs('welcome')) active @endif">Home</a>
+            <a href="{{ route('jobs') }}" class="nav-item nav-link @if(request()->routeIs('jobs')) active @endif">Jobs</a>
         </div>
         @auth('user_accounts')
             <div class="nav-item dropdown d-none d-lg-block">

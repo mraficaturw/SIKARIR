@@ -18,6 +18,40 @@ class InternjobController extends Controller
         $search = $request->get('search');
         $category = $request->get('category');
 
+        // Faculties data - SESUAIKAN DENGAN INTERNJOB FORM
+        $faculties = [
+            'Fakultas Teknik' => 'Fakultas Teknik',
+            'Fakultas Ekonomi dan Bisnis' => 'Fakultas Ekonomi dan Bisnis',
+            'Fakultas Ilmu Komputer' => 'Fakultas Ilmu Komputer',
+            'Fakultas Hukum' => 'Fakultas Hukum',
+            'Fakultas Kesehatan' => 'Fakultas Kesehatan',
+            'Fakultas Pertanian' => 'Fakultas Pertanian',
+            'Fakultas Ilmu Sosial dan Politik' => 'Fakultas Ilmu Sosial dan Politik',
+            'Fakultas Keguruan dan Ilmu Pendidikan' => 'Fakultas Keguruan dan Ilmu Pendidikan',
+            'Fakultas Agama Islam' => 'Fakultas Agama Islam',
+        ];
+
+        // Get user dengan eager loading
+        $user = Auth::guard('user_accounts')->user();
+
+        // Jika user login, load relationships-nya
+        if ($user) {
+            $user->load(['favorites', 'appliedJobs']);
+        }
+
+        // Icons for categories - SESUAIKAN DENGAN FAKULTAS BARU
+        $icons = [
+            'Fakultas Teknik' => 'fa-cogs',
+            'Fakultas Ekonomi dan Bisnis' => 'fa-chart-line',
+            'Fakultas Ilmu Komputer' => 'fa-laptop-code',
+            'Fakultas Hukum' => 'fa-gavel',
+            'Fakultas Kesehatan' => 'fa-stethoscope',
+            'Fakultas Pertanian' => 'fa-seedling',
+            'Fakultas Ilmu Sosial dan Politik' => 'fa-users',
+            'Fakultas Keguruan dan Ilmu Pendidikan' => 'fa-chalkboard-teacher',
+            'Fakultas Agama Islam' => 'fa-mosque',
+        ];
+
         // Query jobs with filters
         $query = Internjob::query();
 
@@ -34,40 +68,6 @@ class InternjobController extends Controller
         }
 
         $jobs = $query->orderBy('created_at', 'desc')->take(6)->get();
-        
-        // Get user dengan eager loading untuk menghindari N+1 queries
-        $user = Auth::guard('user_accounts')->user();
-        
-        // Jika user login, load relationships-nya
-        if ($user) {
-            $user->load(['favorites', 'appliedJobs']);
-        }
-
-        // Faculties data - SESUAIKAN DENGAN INTERNJOB FORM
-        $faculties = [
-            'Fakultas Teknik' => 'Fakultas Teknik',
-            'Fakultas Ekonomi dan Bisnis' => 'Fakultas Ekonomi dan Bisnis',
-            'Fakultas Ilmu Komputer' => 'Fakultas Ilmu Komputer',
-            'Fakultas Hukum' => 'Fakultas Hukum',
-            'Fakultas Kesehatan' => 'Fakultas Kesehatan',
-            'Fakultas Pertanian' => 'Fakultas Pertanian',
-            'Fakultas Ilmu Sosial dan Politik' => 'Fakultas Ilmu Sosial dan Politik',
-            'Fakultas Keguruan dan Ilmu Pendidikan' => 'Fakultas Keguruan dan Ilmu Pendidikan',
-            'Fakultas Agama Islam' => 'Fakultas Agama Islam',
-        ];
-
-        // Icons for categories - SESUAIKAN DENGAN FAKULTAS BARU
-        $icons = [
-            'Fakultas Teknik' => 'fa-cogs',
-            'Fakultas Ekonomi dan Bisnis' => 'fa-chart-line',
-            'Fakultas Ilmu Komputer' => 'fa-laptop-code',
-            'Fakultas Hukum' => 'fa-gavel',
-            'Fakultas Kesehatan' => 'fa-stethoscope',
-            'Fakultas Pertanian' => 'fa-seedling',
-            'Fakultas Ilmu Sosial dan Politik' => 'fa-users',
-            'Fakultas Keguruan dan Ilmu Pendidikan' => 'fa-chalkboard-teacher',
-            'Fakultas Agama Islam' => 'fa-mosque',
-        ];
 
         // Count jobs per category
         $category_counts = [];
@@ -102,7 +102,7 @@ class InternjobController extends Controller
             $query->where('category', $category);
         }
 
-        $jobs = $query->orderBy('created_at', 'desc')->paginate(10);
+        $jobs = $query->orderBy('created_at', 'desc')->get();
         
         // Get user dengan eager loading
         $user = Auth::guard('user_accounts')->user();

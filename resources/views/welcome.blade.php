@@ -24,7 +24,7 @@
                 <div class="container">
                     <div class="row justify-content-start">
                         <div class="col-10 col-lg-8">
-                            <h1 class="display-3 text-white animated slideInDown mb-4">Penui Syarat Magangmu bersama SIKARIR</h1>
+                            <h1 class="display-3 text-white animated slideInDown mb-4">Penuhi Syarat Magangmu bersama SIKARIR</h1>
                             <p class="fs-5 fw-medium text-white mb-4 pb-2">Platform Terpusat untuk Mencari Lowongan Magang Sesuai Bidang Peminatan</p>
                             <a href="{{ route('jobs') }}" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Search A Job</a>
                         </div>
@@ -72,13 +72,15 @@
         <div class="row g-4">
             @foreach($faculties as $key => $name)
             @php
-                $count = $category_counts[$key] ?? 0; 
+                $count = $category_counts[$key] ?? 0;
             @endphp
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                <a class="cat-item rounded p-4" href="{{ route('welcome', ['category' => $key]) }}">
-                    <i class="fa fa-3x {{ $icons[$key] ?? 'fa-graduation-cap' }} text-primary mb-4"></i>
-                    <h6 class="mb-3">{{ $name }}</h6>
-                    <p class="mb-0">{{ $count }} Vacancy</p>
+            <div class="col-lg-3 col-sm-6 d-flex">
+                <a class="card category-card shadow-sm h-100 w-100 text-decoration-none wow fadeInUp" data-wow-delay="{{ 0.1 * ($loop->index + 1) }}s" href="{{ route('welcome', ['category' => $key]) }}">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center text-center">
+                        <i class="fa fa-3x {{ $icons[$key] ?? 'fa-graduation-cap' }} text-primary mb-4"></i>
+                        <h6 class="mb-3 text-truncate">{{ $name }}</h6>
+                        <p class="mb-0">{{ $count }} Vacancy</p>
+                    </div>
                 </a>
             </div>
             @endforeach
@@ -88,68 +90,38 @@
 <!-- Category End -->
 
 <!-- Jobs Start -->
-<div class="container-xxl py-5">
-    <div class="container">
-        <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Latest Jobs</h1>
-        <div class="row g-4">
-            @foreach($jobs as $job)
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="job-item bg-light rounded p-4">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid border rounded" src="{{ asset('img/com-logo-1.jpg') }}" alt="" style="width: 80px; height: 80px;">
-                                <div class="text-start ps-4">
-                                    <h5 class="mb-3">{{ $job->title }}</h5>
-                                    <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ $job->company }}</span>
-                                    <span class="text-truncate me-3"><i class="far fa-calendar-alt text-primary me-2"></i>{{ $job->category }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    @auth('user_accounts')
-                                        <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
-                                            @csrf
-                                            <button type="submit" class="btn btn-light btn-square w-100">
-                                                @if($user && $user->favorites && $user->favorites->contains($job->id))
-                                                    <i class="fas fa-heart text-danger"></i>
-                                                @else
-                                                    <i class="far fa-heart text-primary"></i>
-                                                @endif
-                                            </button>
-                                        </form>
-                                    @else
-                                        <a href="{{ route('login') }}" class="btn btn-light btn-square w-100" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
-                                    @endauth
-                                </div>
-                                <div class="col-6">
-                                    @auth('user_accounts')
-                                        <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
-                                            @csrf
-                                            <button type="submit" class="btn btn-primary w-100">
-                                                @if($user && $user->appliedJobs && $user->appliedJobs->contains($job->id))
-                                                    Applied
-                                                @else
-                                                    Apply
-                                                @endif
-                                            </button>
-                                        </form>
-                                    @else
-                                        <a href="{{ route('login') }}" class="btn btn-primary w-100" onclick="alert('Silakan login untuk menandai job sebagai applied.')">Apply</a>
-                                    @endauth
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <a class="btn btn-primary w-100" href="{{ route('job.detail', $job->id) }}">Details</a>
+<div class="container my-5">
+    <h2 class="text-center fw-bold mb-4">Latest Jobs</h2>
+    <div class="row g-4">
+        @foreach($jobs as $job)
+            <div class="col-md-4 col-lg-3 d-flex">
+                <div class="card job-card shadow-sm h-100 w-100 wow fadeInUp" data-wow-delay="{{ 0.1 * ($loop->index + 1) }}s">
+                    <div class="card-body d-flex flex-column">
+                        <img src="{{ $job->logo ? asset('storage/logos/' . $job->logo) : asset('img/com-logo-1.jpg') }}" alt="Logo" class="mb-3 mx-auto" width="60">
+                        <h5 class="card-title fw-semibold text-center text-truncate">{{ $job->title }}</h5>
+                        <p class="text-muted text-center mb-1 text-truncate"><i class="fa fa-building text-primary me-2"></i> {{ $job->company }}</p>
+                        <p class="text-muted text-center mb-3 text-truncate"><i class="fa fa-graduation-cap text-primary me-2"></i> {{ $job->category }}</p>
+                        <div class="mt-auto d-flex justify-content-center gap-2">
+                            @auth('user_accounts')
+                                <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-success btn-sm">
+                                        @if($user && $user->favorites && $user->favorites->contains($job->id))
+                                            <i class="fas fa-heart text-danger me-1"></i>Favorited
+                                        @else
+                                            <i class="far fa-heart text-primary me-1"></i>Favorite
+                                        @endif
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-outline-success btn-sm" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary me-1"></i>Favorite</a>
+                            @endauth
+                            <a href="{{ route('job.detail', $job->id) }}" class="btn btn-success btn-sm">Details</a>
                         </div>
                     </div>
                 </div>
             </div>
-            @endforeach
-        </div>
+        @endforeach
     </div>
 </div>
 <!-- Jobs End -->
