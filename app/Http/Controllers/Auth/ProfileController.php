@@ -4,20 +4,23 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserAccount;
+use App\Models\Internjob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules;
-use Illuminate\Support\Str;
-use Illuminate\Auth\Events\PasswordReset;
 
 class ProfileController extends Controller
 {
     public function show()
     {
+        /** @var UserAccount $user */
         $user = Auth::guard('user_accounts')->user();
-        return view('profile.profile', compact('user'));
+        
+        // Eager load relationships dengan error handling
+        $favorites = $user->favorites ?? collect();
+        $appliedJobs = $user->appliedJobs ?? collect();
+
+        return view('profile.profile', compact('user', 'favorites', 'appliedJobs'));
     }
 
     public function changePasswordForm()
@@ -32,13 +35,16 @@ class ProfileController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        /** @var UserAccount $user */
         $user = Auth::guard('user_accounts')->user();
 
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'The current password is incorrect.']);
         }
 
-        $user->update(['password' => $request->password]);
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
 
         return back()->with('status', 'Password changed successfully.');
     }
@@ -49,8 +55,11 @@ class ProfileController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        /** @var UserAccount $user */
         $user = Auth::guard('user_accounts')->user();
-        $user->update(['password' => $request->password]);
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
 
         return back()->with('status', 'Password updated successfully.');
     }

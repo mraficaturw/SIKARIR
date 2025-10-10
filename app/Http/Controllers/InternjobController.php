@@ -2,31 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\internjob;
+use App\Models\Internjob;
+use App\Models\UserAccount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InternjobController extends Controller
 {
+    /**
+     * Display welcome page with jobs
+     */
     public function index(Request $request)
     {
-        $query = internjob::query();
+        // Get search parameters
+        $search = $request->get('search');
+        $category = $request->get('category');
 
-        // Filter by category if provided
-        if ($request->has('category') && $request->category) {
-            $query->whereRaw('LOWER(TRIM(category)) = ?', [strtolower($request->category)]);
-        }
+        // Query jobs with filters
+        $query = Internjob::query();
 
-        // Search by title or company
-        if ($request->has('search') && $request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('company', 'like', '%' . $request->search . '%');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('company', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
-        // Limit to 10 latest jobs for welcome page
-        $jobs = $query->latest()->limit(10)->get();
+        if ($category) {
+            $query->where('category', $category);
+        }
 
+        $jobs = $query->orderBy('created_at', 'desc')->take(6)->get();
+        
+        // Get user dengan eager loading untuk menghindari N+1 queries
+        $user = Auth::guard('user_accounts')->user();
+        
+        // Jika user login, load relationships-nya
+        if ($user) {
+            $user->load(['favorites', 'appliedJobs']);
+        }
+
+        // Faculties data - SESUAIKAN DENGAN INTERNJOB FORM
         $faculties = [
             'Fakultas Teknik' => 'Fakultas Teknik',
             'Fakultas Ekonomi dan Bisnis' => 'Fakultas Ekonomi dan Bisnis',
@@ -39,56 +56,63 @@ class InternjobController extends Controller
             'Fakultas Agama Islam' => 'Fakultas Agama Islam',
         ];
 
-        $category_counts = internjob::selectRaw('LOWER(TRIM(category)) as category_key')
-            ->selectRaw('COUNT(*) as count')
-            ->whereNotNull('category')
-            ->groupBy('category_key')
-            ->get()
-            ->pluck('count', 'category_key');
-
+        // Icons for categories - SESUAIKAN DENGAN FAKULTAS BARU
         $icons = [
             'Fakultas Teknik' => 'fa-cogs',
             'Fakultas Ekonomi dan Bisnis' => 'fa-chart-line',
             'Fakultas Ilmu Komputer' => 'fa-laptop-code',
             'Fakultas Hukum' => 'fa-gavel',
-            'Fakultas Kesehatan' => 'fa-heartbeat',
-            'Fakultas Pertanian' => 'fa-leaf',
+            'Fakultas Kesehatan' => 'fa-stethoscope',
+            'Fakultas Pertanian' => 'fa-seedling',
             'Fakultas Ilmu Sosial dan Politik' => 'fa-users',
-            'Fakultas Keguruan dan Ilmu Pendidikan' => 'fa-graduation-cap',
+            'Fakultas Keguruan dan Ilmu Pendidikan' => 'fa-chalkboard-teacher',
             'Fakultas Agama Islam' => 'fa-mosque',
         ];
 
-        $user = auth('user_accounts')->user();
-
-        return view('welcome', compact('jobs', 'faculties', 'category_counts', 'icons', 'user'));
-    }
-
-    public function show($id)
-    {
-        $job = internjob::findOrFail($id);
-        $user = auth('user_accounts')->user();
-        return view('job-detail', compact('job', 'user'));
-    }
-
-    public function jobs(Request $request)
-    {
-        $query = internjob::query();
-
-        // Filter by category if provided
-        if ($request->has('category') && $request->category) {
-            $query->whereRaw('LOWER(TRIM(category)) = ?', [strtolower($request->category)]);
+        // Count jobs per category
+        $category_counts = [];
+        foreach ($faculties as $key => $name) {
+            $category_counts[$key] = Internjob::where('category', $key)->count();
         }
 
-        // Search by title or company
-        if ($request->has('search') && $request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('company', 'like', '%' . $request->search . '%');
+        return view('welcome', compact('jobs', 'user', 'faculties', 'icons', 'category_counts'));
+    }
+
+    /**
+     * Display all jobs with pagination
+     */
+    public function jobs(Request $request)
+    {
+        // Get search parameters
+        $search = $request->get('search');
+        $category = $request->get('category');
+
+        // Query jobs with filters
+        $query = Internjob::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('company', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
-        $jobs = $query->latest()->paginate(10);
+        if ($category) {
+            $query->where('category', $category);
+        }
 
+        $jobs = $query->orderBy('created_at', 'desc')->paginate(10);
+        
+        // Get user dengan eager loading
+        $user = Auth::guard('user_accounts')->user();
+        
+        // Jika user login, load relationships-nya
+        if ($user) {
+            $user->load(['favorites', 'appliedJobs']);
+        }
+
+        // Faculties data - SESUAIKAN DENGAN INTERNJOB FORM
         $faculties = [
             'Fakultas Teknik' => 'Fakultas Teknik',
             'Fakultas Ekonomi dan Bisnis' => 'Fakultas Ekonomi dan Bisnis',
@@ -101,62 +125,98 @@ class InternjobController extends Controller
             'Fakultas Agama Islam' => 'Fakultas Agama Islam',
         ];
 
-        $category_counts = internjob::selectRaw('LOWER(TRIM(category)) as category_key')
-            ->selectRaw('COUNT(*) as count')
-            ->whereNotNull('category')
-            ->groupBy('category_key')
-            ->get()
-            ->pluck('count', 'category_key');
-
-        $icons = [
-            'Fakultas Teknik' => 'fa-cogs',
-            'Fakultas Ekonomi dan Bisnis' => 'fa-chart-line',
-            'Fakultas Ilmu Komputer' => 'fa-laptop-code',
-            'Fakultas Hukum' => 'fa-heartbeat',
-            'Fakultas Pertanian' => 'fa-leaf',
-            'Fakultas Ilmu Sosial dan Politik' => 'fa-users',
-            'Fakultas Keguruan dan Ilmu Pendidikan' => 'fa-graduation-cap',
-            'Fakultas Agama Islam' => 'fa-mosque',
-        ];
-
-        $user = auth('user_accounts')->user();
-
-        return view('jobs', compact('jobs', 'faculties', 'category_counts', 'icons', 'user'));
+        return view('jobs', compact('jobs', 'user', 'faculties'));
     }
 
+    /**
+     * Display job details
+     */
+    public function show($id)
+    {
+        $job = Internjob::findOrFail($id);
+        
+        // Get user dengan eager loading
+        $user = Auth::guard('user_accounts')->user();
+        
+        // Jika user login, load relationships-nya
+        if ($user) {
+            $user->load(['favorites', 'appliedJobs']);
+        }
+
+        return view('job-detail', compact('job', 'user'));
+    }
+
+    /**
+     * Toggle favorite job
+     */
     public function toggleFavorite($id)
     {
-        $user = auth('user_accounts')->user();
+        /** @var UserAccount $user */
+        $user = Auth::guard('user_accounts')->user();
+        
         if (!$user) {
-            return back()->with('error', 'Silakan login untuk menambahkan job ke favorit.');
+            if (request()->expectsJson()) {
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
+            return redirect()->route('login');
         }
-        $job = internjob::findOrFail($id);
 
+        $job = Internjob::findOrFail($id);
+
+        // Check if already favorited
         if ($user->favorites()->where('internjob_id', $id)->exists()) {
             $user->favorites()->detach($id);
-            $message = 'Job removed from favorites.';
+            $message = 'Job removed from favorites';
+            $isFavorited = false;
         } else {
             $user->favorites()->attach($id);
-            $message = 'Job added to favorites.';
+            $message = 'Job added to favorites';
+            $isFavorited = true;
+        }
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+                'is_favorited' => $isFavorited
+            ]);
         }
 
         return back()->with('success', $message);
     }
 
+    /**
+     * Toggle applied job
+     */
     public function toggleApplied($id)
     {
-        $user = auth('user_accounts')->user();
+        /** @var UserAccount $user */
+        $user = Auth::guard('user_accounts')->user();
+        
         if (!$user) {
-            return back()->with('error', 'Silakan login untuk menandai job sebagai applied.');
+            if (request()->expectsJson()) {
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
+            return redirect()->route('login');
         }
-        $job = internjob::findOrFail($id);
 
-        if ($user->applied()->where('internjob_id', $id)->exists()) {
-            $user->applied()->detach($id);
-            $message = 'Job unmarked as applied.';
+        $job = Internjob::findOrFail($id);
+
+        // Check if already applied
+        if ($user->appliedJobs()->where('internjob_id', $id)->exists()) {
+            $user->appliedJobs()->detach($id);
+            $message = 'Job removed from applied list';
+            $isApplied = false;
         } else {
-            $user->applied()->attach($id, ['applied_at' => now()]);
-            $message = 'Job marked as applied.';
+            $user->appliedJobs()->attach($id, ['applied_at' => now()]);
+            $message = 'Job marked as applied';
+            $isApplied = true;
+        }
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+                'is_applied' => $isApplied
+            ]);
         }
 
         return back()->with('success', $message);

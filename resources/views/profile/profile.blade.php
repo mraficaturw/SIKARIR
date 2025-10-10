@@ -10,49 +10,57 @@
     @if(session('status'))
         <div class="alert alert-info">{{ session('status') }}</div>
     @endif
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <div class="mb-4">
         <h4>Dream Job (Favorit):</h4>
         @if($favorites->isEmpty())
             <p>You have no favorite jobs.</p>
         @else
-            <ul class="list-group">
+            <div class="row">
                 @foreach($favorites as $job)
-                    <li class="list-group-item">
-                        <a href="{{ route('job.detail', $job->id) }}">{{ $job->title }} at {{ $job->company }}</a>
-                    </li>
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $job->title }}</h5>
+                                <p class="card-text">{{ $job->company }} - {{ $job->location }}</p>
+                                <a href="{{ route('job.detail', $job->id) }}" class="btn btn-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
-            </ul>
+            </div>
         @endif
     </div>
 
     <div class="mb-4">
         <h4>Applied Jobs:</h4>
-        @if($applied->isEmpty())
+        @if($appliedJobs->isEmpty())
             <p>You have not marked any jobs as applied.</p>
         @else
-            <ul class="list-group">
-                @foreach($applied as $job)
-                    <li class="list-group-item">
-                        <a href="{{ route('job.detail', $job->id) }}">{{ $job->title }} at {{ $job->company }}</a>
-                        <span class="text-muted">Applied at: {{ $job->pivot->applied_at->format('d M, Y') }}</span>
-                    </li>
+            <div class="row">
+                @foreach($appliedJobs as $job)
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $job->title }}</h5>
+                                <p class="card-text">{{ $job->company }} - {{ $job->location }}</p>
+                                <p class="text-muted small">
+                                    Applied: {{ \Carbon\Carbon::parse($job->pivot->applied_at)->format('d M, Y H:i') }}
+                                </p>
+                                <a href="{{ route('job.detail', $job->id) }}" class="btn btn-primary btn-sm">View Details</a>
+                                @if($job->apply_url)
+                                    <a href="{{ $job->apply_url }}" target="_blank" class="btn btn-success btn-sm">Apply Now</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
-            </ul>
+            </div>
         @endif
     </div>
 
     <div class="mb-4">
-        <h4>Change Password:</h4>
+        <h4>Account Settings:</h4>
         <a href="{{ route('profile.change-password') }}" class="btn btn-warning">Change Password</a>
     </div>
 

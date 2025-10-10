@@ -8,13 +8,13 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * Creates the user_accounts table for regular users in the multi-auth system.
+     * Creates the user_account_accountsaccounts table for regular users in the multi-auth system.
      * Admins use the separate 'users' table managed by Filament.
      */
     public function up(): void
     {
-        if (!Schema::hasTable('user_accounts')) {
-            Schema::create('user_accounts', function (Blueprint $table) {
+        if (!Schema::hasTable('user_account_accounts')) {
+            Schema::create('user_account_accounts', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
                 $table->string('email')->unique();
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_accounts');
+        Schema::dropIfExists('user_account_accounts');
     }
 };

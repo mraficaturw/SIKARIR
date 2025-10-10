@@ -16,77 +16,77 @@
 <!-- Header End -->
 
 <!-- Job Detail Start -->
-<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+<div class="container-xxl py-5">
     <div class="container">
-        <div class="row gy-5 gx-4">
-            <div class="col-lg-8">
-                <div class="d-flex align-items-center mb-5">
-                    <img class="flex-shrink-0 img-fluid border rounded" src="{{ $job->logo ? asset('storage/' . $job->logo) : asset('img/com-logo-2.jpg') }}" alt="" style="width: 80px; height: 80px;">
-                    <div class="text-start ps-4">
-                        <h3 class="mb-3">{{ $job->title }}</h3>
-                        <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ $job->location }}</span>
-                        <span class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>Internship</span>
-                        <span class="text-truncate me-0"><i class="far fa-money-bill-alt text-primary me-2"></i>Rp {{ number_format($job->salary_min) }} - Rp {{ number_format($job->salary_max) }}</span>
-                    </div>
-                </div>
-
-                <div class="mb-5">
-                    <h4 class="mb-3">Job description</h4>
+        <div class="row g-5">
+            <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="job-detail bg-light rounded p-5">
+                    <h2>{{ $job->title }}</h2>
+                    <p class="mb-3"><i class="fa fa-building text-primary me-2"></i>{{ $job->company }}</p>
+                    <p class="mb-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>Location: {{ $job->location ?? 'Not specified' }}</p>
+                    <p class="mb-3"><i class="fa fa-graduation-cap text-primary me-2"></i>Category: {{ $job->category }}</p>
+                    <p class="mb-3"><i class="fa fa-calendar text-primary me-2"></i>Posted: {{ $job->created_at->format('M d, Y') }}</p>
+                    <h4>Description</h4>
                     <p>{{ $job->description }}</p>
-                    <h4 class="mb-3">Responsibility</h4>
-                    <p>{{ $job->responsibility }}</p>
-                    <h4 class="mb-3">Qualifications</h4>
-                    <p>{{ $job->qualifications }}</p>
-                </div>
-
-                <div class="">
-                    <h4 class="mb-4">Apply For The Job</h4>
-                    @if($job->apply_url)
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <a href="{{ $job->apply_url }}" target="_blank" class="btn btn-primary w-100">Apply Now</a>
-                            </div>
-                        </div>
+                    @if($job->requirements)
+                    <h4>Requirements</h4>
+                    <p>{{ $job->requirements }}</p>
                     @endif
-                    <div class="row g-3 mt-3">
-                        <div class="col-12">
-                            @auth('user_accounts')
-                                <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success w-100">
-                                        @if($user && $user->applied->contains($job->id))
-                                            Marked Applied
-                                        @else
-                                            Mark as Applied
-                                        @endif
-                                    </button>
-                                </form>
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-success w-100" onclick="alert('Silakan login untuk menandai job sebagai applied.')">Mark as Applied</a>
-                            @endauth
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-start align-items-center mt-4 gap-3">
-                        <a class="btn btn-outline-primary" href="{{ route('jobs') }}">Back to Jobs</a>
-                        @auth('user_accounts')
-                            <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
-                                @csrf
-                                <button type="submit" class="btn btn-light btn-square">
-                                    @if($user && $user->favorites->contains($job->id))
-                                        <i class="fas fa-heart text-danger"></i>
-                                    @else
-                                        <i class="far fa-heart text-primary"></i>
-                                    @endif
-                                </button>
-                            </form>
-                        @else
-                            <a href="{{ route('login') }}" class="btn btn-light btn-square" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
-                        @endauth
-                    </div>
+                    @if($job->apply_url)
+                    <h4>How to Apply</h4>
+                    <p><a href="{{ $job->apply_url }}" target="_blank" class="btn btn-primary">Apply Here</a></p>
+                    @endif
+                </div>
+            </div>
+            <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="bg-light rounded p-5 mb-4">
+                    <h4 class="mb-4">Job Summary</h4>
+                    <p><i class="fa fa-building text-primary me-2"></i><strong>Company:</strong> {{ $job->company }}</p>
+                    <p><i class="fa fa-map-marker-alt text-primary me-2"></i><strong>Location:</strong> {{ $job->location ?? 'Not specified' }}</p>
+                    <p><i class="fa fa-graduation-cap text-primary me-2"></i><strong>Category:</strong> {{ $job->category }}</p>
+                    <p><i class="fa fa-calendar text-primary me-2"></i><strong>Posted:</strong> {{ $job->created_at->format('M d, Y') }}</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="row g-3 mt-3">
+    <div class="col-12">
+        @auth('user_accounts')
+            <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
+                @csrf
+                <button type="submit" class="btn btn-success w-100">
+                    @if($user && $user->appliedJobs && $user->appliedJobs->contains($job->id))
+                        Marked Applied
+                    @else
+                        Mark as Applied
+                    @endif
+                </button>
+            </form>
+        @else
+            <a href="{{ route('login') }}" class="btn btn-success w-100" onclick="alert('Silakan login untuk menandai job sebagai applied.')">Mark as Applied</a>
+        @endauth
+    </div>
+</div>
+
+<!-- Di bagian tombol favorite -->
+<div class="d-flex justify-content-start align-items-center mt-4 gap-3">
+    <a class="btn btn-outline-primary" href="{{ route('jobs') }}">Back to Jobs</a>
+    @auth('user_accounts')
+        <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
+            @csrf
+            <button type="submit" class="btn btn-light btn-square">
+                @if($user && $user->favorites && $user->favorites->contains($job->id))
+                    <i class="fas fa-heart text-danger"></i>
+                @else
+                    <i class="far fa-heart text-primary"></i>
+                @endif
+            </button>
+        </form>
+    @else
+        <a href="{{ route('login') }}" class="btn btn-light btn-square" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
+    @endauth
 </div>
 <!-- Job Detail End -->
 @endsection
