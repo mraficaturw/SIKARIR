@@ -34,9 +34,8 @@
             $('.back-to-top').fadeOut('slow');
         }
     });
-    $('.back-to-top').on('click', function (e) {
-        e.preventDefault();
-        $('html, body').animate({scrollTop: 0}, 800, 'swing');
+    $('.back-to-top').click(function () {
+        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
         return false;
     });
 
@@ -49,10 +48,10 @@
         dots: true,
         loop: true,
         nav : true,
-    navText : [
-        '<i class="fa fa-angle-left"></i>',
-        '<i class="fa fa-angle-right"></i>'
-    ]
+        navText : [
+            '<i class="bi bi-chevron-left"></i>',
+            '<i class="bi bi-chevron-right"></i>'
+        ]
     });
 
 

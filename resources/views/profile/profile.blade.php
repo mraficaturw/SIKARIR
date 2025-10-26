@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-5">
-    <h2>Profile: {{ $user->name }}</h2>
+    <h2>Hi, {{ $user->name }}!</h2>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -11,7 +11,7 @@
         <div class="alert alert-info">{{ session('status') }}</div>
     @endif
 
-    <div class="mb-5">
+    <div class="mt-5 mb-5">
         <h4 class="fw-semibold mb-4">Dream Jobs (Favorites):</h4>
         @if($favorites->isEmpty())
             <div class="bg-white rounded shadow-sm p-4 border text-center">

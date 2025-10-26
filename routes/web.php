@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 // Public routes
 Route::get('/', [InternjobController::class, 'index'])->name('welcome');
@@ -29,14 +31,31 @@ Route::middleware('guest:user_accounts')->group(function () {
 
 // Protected routes (harus login)
 Route::middleware('auth:user_accounts')->group(function () {
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     
-    // Profile routes
-    Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('profile/change-password', [ProfileController::class, 'changePasswordForm'])->name('profile.change-password');
-    Route::post('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password.post');
+    // Email verification routes (mengharuskan auth)
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
 
-    // Job interaction routes
-    Route::post('job/{id}/favorite-toggle', [InternjobController::class, 'toggleFavorite'])->name('job.favorite.toggle');
-    Route::post('job/{id}/applied-toggle', [InternjobController::class, 'toggleApplied'])->name('job.applied.toggle');
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect()->route('welcome')->with('success', 'Email kamu berhasil diverifikasi!');
+    })->middleware('signed')->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user('user_accounts')->sendEmailVerificationNotification();
+        return back()->with('message', 'Link verifikasi sudah dikirim ulang ke email kamu.');
+    })->middleware('throttle:6,1')->name('verification.send');
+
+    // Routes yang hanya boleh diakses oleh user yang sudah diverifikasi
+    Route::middleware('verified')->group(function () {
+        // Profile routes
+        Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+        Route::get('profile/change-password', [ProfileController::class, 'changePasswordForm'])->name('profile.change-password');
+        Route::post('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password.post');
+
+        // Job interaction routes
+        Route::post('job/{id}/favorite-toggle', [InternjobController::class, 'toggleFavorite'])->name('job.favorite.toggle');
+        Route::post('job/{id}/applied-toggle', [InternjobController::class, 'toggleApplied'])->name('job.applied.toggle');
+    });
 });

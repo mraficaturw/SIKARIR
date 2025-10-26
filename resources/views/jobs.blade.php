@@ -31,40 +31,61 @@
 <!-- Search End -->
 
 <!-- Jobs Start -->
-<div class="container-xxl py-5">
-    <div class="container">
-        <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Browse More Job</h1>
-        <div class="row g-4">
-            @foreach($jobs as $job)
-            <div class="col-md-4 col-lg-3 d-flex">
-                <div class="card job-card shadow-sm h-100 w-100 wow fadeInUp" data-wow-delay="{{ 0.1 * ($loop->index + 1) }}s">
-                    <div class="card-body d-flex flex-column">
-                        <img src="{{ $job->logo ? asset('storage/logos/' . $job->logo) : asset('img/com-logo-1.jpg') }}" alt="Logo" class="mb-3 mx-auto" width="60">
-                        <h5 class="card-title fw-semibold text-center text-truncate">{{ $job->title }}</h5>
-                        <p class="text-muted text-center mb-1 text-truncate"><i class="fa fa-building text-primary me-2"></i> {{ $job->company }}</p>
-                        <p class="text-muted text-center mb-3 text-truncate"><i class="fa fa-graduation-cap text-primary me-2"></i> {{ $job->category }}</p>
-                        <div class="mt-auto d-flex justify-content-center gap-2">
-                            @auth('user_accounts')
-                                <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
-                                    @csrf
-                                    <button type="submit" class="btn btn-outline-success btn-sm">
-                                        @if($user && $user->favorites && $user->favorites->contains($job->id))
-                                            <i class="fas fa-heart text-danger me-1"></i>Favorited
+<div class="container my-5" style="min-height: 60vh;">
+    <h2 class="text-center fw-bold mb-4">Follow Your Dream Career Path!</h2>
+    <div class="tab-content"  style="overflow-y: auto; max-height: 400px;">
+        <div class="tab-pane fade show p-0 active">
+        @foreach($jobs as $job)
+                <div class="job-item p-4 mb-4">
+                    <div class="row g-4">
+                        <div class="col-sm-12 col-md-8 d-flex align-items-center">
+                            <img class="flex-shrink-0 img-fluid border rounded" {{ $job->logo ? asset('storage/logos/' . $job->logo) : asset('img\com-logo-1.jpg') }} alt="Logo" class="mb-3 mx-auto" width="60">
+                                <div class="text-start ps-4">
+                                    <h5 class="mb-3">{{ $job->title }}</h5>
+                                    <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i> {{ $job->company }}</span>
+                                    <span class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>
+                                        @if(mb_strlen($job->category) > 15)
+                                            {{ mb_substr($job->category, 0, 15) . '...' }}
                                         @else
-                                            <i class="far fa-heart text-primary me-1"></i>Favorite
+                                            {{ $job->category }}
                                         @endif
-                                    </button>
-                                </form>
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-outline-success btn-sm" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary me-1"></i>Favorite</a>
-                            @endauth
-                            <a href="{{ route('job.detail', $job->id) }}" class="btn btn-success btn-sm">Details</a>
+                                    </span>
+                                    <span class="text-truncate me-0">
+                                        <i class="far fa-money-bill-alt text-primary me-2"></i>
+                                        Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - Rp {{ number_format((int)$job->salary_max, 0, ',', '.') }}
+                                    </span>
+                                </div>
                         </div>
+                        <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
+                            <div class="d-flex mb-3">
+                                @auth('user_accounts')
+                                    <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
+                                    @csrf
+                                        <button type="submit" class="btn btn-light btn-square me-3">
+                                            @if($user && $user->favorites && $user->favorites->contains($job->id))
+                                                <i class="far fa-solid fa-heart text-primary"></i>
+                                            @else
+                                                <i class="far fa-heart text-primary" ></i>
+                                            @endif
+                                        </button>
+                                    </form>
+                                    @else
+                                    <a href="{{ route('login') }}" class="btn btn-light btn-square me-3" onclick="alert('Silakan login untuk menambahkan job ke favorit.')">
+                                        <i class="far fa-heart text-primary me-1"></i>
+                                    </a>
+                                @endauth
+                                <a class="btn btn-primary" href="{{ route('job.detail', $job->id) }}">Details</a>
+                            </div>
+                                <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Deadline : {{ $job->deadline->format('d-m-Y') }}</small>
+                            </div>
                     </div>
                 </div>
-            </div>
-            @endforeach
+        @endforeach
         </div>
+    </div>
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+        {{ $jobs->links() }}
     </div>
 </div>
 <!-- Jobs End -->

@@ -22,6 +22,16 @@ class LoginController extends Controller
         ]);
 
         if (Auth::guard('user_accounts')->attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::guard('user_accounts')->user();
+
+            if (is_null($user->email_verified_at)) {
+                Auth::guard('user_accounts')->logout();
+
+                throw ValidationException::withMessages([
+                    'email' => 'Lakukan Verifikasi Email Terlebih Dahulu',
+                ]);
+            }
+
             $request->session()->regenerate();
 
             return redirect()->intended(route('welcome'))->with('success', 'Login successful.');

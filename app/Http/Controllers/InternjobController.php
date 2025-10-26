@@ -32,11 +32,12 @@ class InternjobController extends Controller
         ];
 
         // Get user dengan eager loading
+        /** @var UserAccount|null $user */
         $user = Auth::guard('user_accounts')->user();
 
-        // Jika user login, load relationships-nya
-        if ($user) {
-            $user->load(['favorites', 'appliedJobs']);
+        // Jika user login, ensure we have an Eloquent UserAccount instance with relationships
+        if ($user instanceof UserAccount && $user->getKey()) {
+            $user = UserAccount::with(['favorites', 'appliedJobs'])->find($user->getKey());
         }
 
         // Icons for categories - SESUAIKAN DENGAN FAKULTAS BARU
@@ -67,7 +68,7 @@ class InternjobController extends Controller
             $query->where('category', $category);
         }
 
-        $jobs = $query->orderBy('created_at', 'desc')->take(6)->get();
+        $jobs = $query->orderBy('created_at', 'desc')->limit(5)->get();
 
         // Count jobs per category
         $category_counts = [];
@@ -102,13 +103,14 @@ class InternjobController extends Controller
             $query->where('category', $category);
         }
 
-        $jobs = $query->orderBy('created_at', 'desc')->get();
+        $jobs = $query->orderBy('created_at', 'desc')->paginate(10);
         
         // Get user dengan eager loading
+        /** @var UserAccount|null $user */
         $user = Auth::guard('user_accounts')->user();
         
-        // Jika user login, load relationships-nya
-        if ($user) {
+        // Jika user login, load relationships-nya (only if it's an Eloquent model)
+        if ($user instanceof UserAccount) {
             $user->load(['favorites', 'appliedJobs']);
         }
 
@@ -138,9 +140,9 @@ class InternjobController extends Controller
         // Get user dengan eager loading
         $user = Auth::guard('user_accounts')->user();
         
-        // Jika user login, load relationships-nya
-        if ($user) {
-            $user->load(['favorites', 'appliedJobs']);
+        // Jika user login, ensure we have an Eloquent UserAccount instance with relationships
+        if ($user && $user instanceof UserAccount && $user->getKey()) {
+            $user = UserAccount::with(['favorites', 'appliedJobs'])->find($user->getKey());
         }
 
         return view('job-detail', compact('job', 'user'));
