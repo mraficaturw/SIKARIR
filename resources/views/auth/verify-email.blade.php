@@ -19,7 +19,13 @@
                         <button type="submit" class="btn btn-primary">Kirim Ulang Email Verifikasi</button>
                     </form>
 
-                    <a href="{{ route('logout') }}" class="btn btn-link">Kembali</a>
+                    <a href="{{ route('logout') }}" class="btn btn-danger"onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Kembali</a>
+                        @if (Route::has('logout'))
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-secondary mt-3">Logout</button>
+                            </form>
+                        @endif
                 </div>
             </div>
         </div>

@@ -9,22 +9,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RedirectIfAuthenticated
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // Redirect berdasarkan guard
                 if ($guard === 'user_accounts') {
                     $user = Auth::guard('user_accounts')->user();
                     if (is_null($user->email_verified_at)) {
-                        return redirect()->route('verification.notice');
+                        Auth::guard('user_accounts')->logout();
+                        return redirect()->route('verification.notice')
+                            ->with('message', 'Verifikasi email kamu terlebih dahulu sebelum masuk.');
                     }
                     return redirect()->route('welcome');
                 }
