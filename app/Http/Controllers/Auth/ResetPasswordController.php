@@ -3,51 +3,111 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserAccount;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
 
 class ResetPasswordController extends Controller
 {
     /**
      * Display the password reset form.
-     * Used for user_accounts guard in multi-auth system.
      */
-    public function showResetForm(Request $request, $token = null)
+    public function showResetForm()
     {
-        return view('auth.reset-password')->with([
-            'token' => $token,
-            'email' => $request->email,
-        ]);
+        return view('auth.reset-password');
     }
 
     /**
-     * Handle the password reset.
-     * Resets password for user_accounts using the 'user_accounts' broker.
+     * Handle the password change request.
+     * Validates email and old password, then sends verification email.
      */
-    public function reset(Request $request)
+    public function changePassword(Request $request)
     {
         $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|exists:user_accounts,email',
+            'old_password' => 'required',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $status = Password::broker('user_accounts')->reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->password = Hash::make($request->password);
-                $user->setRememberToken(Str::random(60));
-                $user->save();
+        // Find user by email
+        $user = UserAccount::where('email', $request->email)->first();
 
-                event(new PasswordReset($user));
+        // Check if old password is correct
+        if (!Hash::check($request->old_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'old_password' => 'Email atau Password Lama tidak sesuai.',
+            ]);
+        }
+
+        // Generate token for password change verification
+        $token = Str::random(64);
+
+        // Store token in cache with expiration (24 hours)
+        $cacheKey = 'password_change_' . $user->id;
+        cache([$cacheKey => [
+            'token' => $token,
+            'new_password' => Hash::make($request->password),
+            'expires_at' => Carbon::now()->addHours(24),
+        ]], 1440); // 1440 minutes = 24 hours
+
+        // Send verification email
+        try {
+            Mail::send('emails.password-change-verification', [
+                'user' => $user,
+                'token' => $token,
+            ], function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Verifikasi Perubahan Password');
+            });
+
+            return redirect()->route('login')->with('success', 'Link verifikasi perubahan password telah dikirim ke email Anda.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Gagal mengirim email verifikasi.']);
+        }
+    }
+
+    /**
+     * Handle the password change verification.
+     */
+    public function verifyPasswordChange(Request $request, $token)
+    {
+        // Find user by token in cache
+        $users = UserAccount::all();
+        $user = null;
+        $cacheKey = '';
+
+        foreach ($users as $u) {
+            $cacheKey = 'password_change_' . $u->id;
+            $cachedData = cache($cacheKey);
+
+            if ($cachedData && $cachedData['token'] === $token) {
+                $user = $u;
+                break;
             }
-        );
+        }
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+        if (!$user || !$cachedData) {
+            return redirect()->route('password.request')->withErrors(['token' => 'Link verifikasi tidak valid atau telah kadaluarsa.']);
+        }
+
+        // Check if token has expired
+        if (Carbon::now()->greaterThan($cachedData['expires_at'])) {
+            cache()->forget($cacheKey);
+            return redirect()->route('password.request')->withErrors(['token' => 'Waktu verifikasi habis, silakan isi ulang form reset password.']);
+        }
+
+        // Update password
+        $user->password = $cachedData['new_password'];
+        $user->save();
+
+        // Clear cache
+        cache()->forget($cacheKey);
+
+        return redirect()->route('profile.show')->with('success', 'Password berhasil diperbarui.');
     }
 }

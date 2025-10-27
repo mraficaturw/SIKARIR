@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class UserAccount extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, MustVerifyEmail;
 
     protected $fillable = [
         'name',

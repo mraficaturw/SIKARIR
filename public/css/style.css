@@ -441,3 +441,38 @@
     background-color: var(--primary);
     color: #FFFFFF;
 }
+
+body.auth-background {
+    position: relative;
+    background-image: url('../img/background-auth.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+body.auth-background::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* shorthand untuk top:0; right:0; bottom:0; left:0 */
+    background-color: rgba(0, 0, 0, 0.5); /* hitam dengan transparansi 50% */
+    z-index: 0;
+}
+
+body.auth-background main,
+body.auth-background nav,
+body.auth-background footer {
+    position: relative;
+    z-index: 1; /* pastikan konten tampil di atas overlay */
+}
+
+.form-label {
+    color: var(--light);
+}
+
+.form-text {
+    color: var(--light);
+}
+
+.form-check-label {
+    color: var(--light);
+}

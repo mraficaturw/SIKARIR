@@ -1,10 +1,10 @@
-@extends('layouts.app')
+@extends('auth.layouts.auth-view')
 
-@section('content')
-<div class="container py-5">
+@section('content-auth')
+<div class="container py-5 pt-10">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h2 class="mb-4 text-center">Login</h2>
+            <h2 class="mb-4 text-center text-white">Login</h2>
 
             {{-- Alert sukses (misal setelah register) --}}
             @if(session('success'))
@@ -40,7 +40,7 @@
                     @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <div class="form-text text-muted">
+                    <div class="form-text">
                         Gunakan Email Kampus Unsika.</strong>.
                     </div>
                 </div>
@@ -69,9 +69,9 @@
                 </div>
 
                 {{-- Submit --}}
-                <div class="d-grid gap-2">
+                <div class="d-grid gap-5">
                     <button type="submit" class="btn btn-primary">Login</button>
-                    <a href="{{ route('register') }}" class="btn btn-link text-center">Belum punya akun? Register</a>
+                    <a href="{{ route('register') }}" class="btn btn-link text-center text-white">Belum punya akun? Register</a>
                 </div>
             </form>
         </div>
@@ -80,15 +80,18 @@
 
 {{-- Validasi tambahan di sisi client --}}
 <script>
-document.getElementById('loginForm').addEventListener('submit', function (e) {
-    const emailField = document.getElementById('email');
-    const email = emailField.value.trim();
+const form = document.getElementById('loginForm');
+if (form) {
+    form.addEventListener('submit', function (e) {
+        const emailField = document.getElementById('email');
+        const email = emailField.value.trim();
 
-    if (!email.endsWith('@student.unsika.ac.id')) {
-        e.preventDefault();
-        alert('Gunakan Email Kampus Unsika.');
-        emailField.focus();
-    }
-});
+        if (!email.endsWith('@student.unsika.ac.id')) {
+            e.preventDefault();
+            alert('Gunakan Email Kampus Unsika.');
+            emailField.focus();
+        }
+    });
+}
 </script>
 @endsection

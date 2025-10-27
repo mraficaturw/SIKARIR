@@ -52,15 +52,19 @@
                             <h4 class="mb-4">Apply For The Job</h4>
                             <p><a href="{{ $job->apply_url }}" target="_blank" class="text-secondary">Apply Here : {{ $job->apply_url }}</a></p>
                             @auth('user_accounts')
-                                <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
-                                    @csrf
-                                        @if($user && $user->appliedJobs && $user->appliedJobs->contains($job->id))
-                                            <button type="submit" class="btn btn-danger w-100">Remove Apply Mark</button>
-                                        @else
-                                            <button type="submit" class="btn btn-success w-100">Mark as Applied</button>
-                                        @endif
-                                    </button>
-                                </form>
+                                @if(auth('user_accounts')->user()->hasVerifiedEmail())
+                                    <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
+                                        @csrf
+                                            @if($user && $user->appliedJobs && $user->appliedJobs->contains($job->id))
+                                                <button type="submit" class="btn btn-danger w-100">Remove Apply Mark</button>
+                                            @else
+                                                <button type="submit" class="btn btn-success w-100">Mark as Applied</button>
+                                            @endif
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('verification.notice') }}" class="btn btn-success w-100" onclick="alert('Silakan verifikasi email untuk menandai job sebagai applied.')">Mark as Applied</a>
+                                @endif
                             @else
                                 <a href="{{ route('login') }}" class="btn btn-success w-100" onclick="alert('Silakan login untuk menandai job sebagai applied.')">Mark as Applied</a>
                             @endauth
@@ -82,16 +86,20 @@
                     <div class="d-flex justify-content-start align-items-center mt-5 gap-3">
                         <a class="btn btn-outline-primary" href="{{ route('jobs') }}">Back to Jobs</a>
                         @auth('user_accounts')
-                            <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
-                                @csrf
-                                <button type="submit" class="btn btn-light btn-square">
-                                   @if($user && $user->favorites && $user->favorites->contains($job->id))
-                                        <i class="far fa-solid fa-heart text-primary"></i>
-                                    @else
-                                        <i class="far fa-heart text-primary"></i>
-                                    @endif
-                                </button>
-                            </form>
+                            @if(auth('user_accounts')->user()->hasVerifiedEmail())
+                                <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-light btn-square">
+                                       @if($user && $user->favorites && $user->favorites->contains($job->id))
+                                            <i class="far fa-solid fa-heart text-primary"></i>
+                                        @else
+                                            <i class="far fa-heart text-primary"></i>
+                                        @endif
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('verification.notice') }}" class="btn btn-light btn-square" onclick="alert('Silakan verifikasi email untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
+                            @endif
                         @else
                             <a href="{{ route('login') }}" class="btn btn-light btn-square" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
                         @endauth

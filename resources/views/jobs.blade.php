@@ -39,7 +39,10 @@
                 <div class="job-item p-4 mb-4">
                     <div class="row g-4">
                         <div class="col-sm-12 col-md-8 d-flex align-items-center">
-                            <img class="flex-shrink-0 img-fluid border rounded" {{ $job->logo ? asset('storage/logos/' . $job->logo) : asset('img\com-logo-1.jpg') }} alt="Logo" class="mb-3 mx-auto" width="60">
+                            <img class="flex-shrink-0 img-fluid border rounded mb-3"
+                                src="{{ $job->logo ? asset('storage/logos/' . $job->logo) : asset('img/com-logo-1.jpg') }}"
+                                alt="Logo"
+                                width="60">
                                 <div class="text-start ps-4">
                                     <h5 class="mb-3">{{ $job->title }}</h5>
                                     <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i> {{ $job->company }}</span>
@@ -59,16 +62,22 @@
                         <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                             <div class="d-flex mb-3">
                                 @auth('user_accounts')
-                                    <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
-                                    @csrf
-                                        <button type="submit" class="btn btn-light btn-square me-3">
-                                            @if($user && $user->favorites && $user->favorites->contains($job->id))
-                                                <i class="far fa-solid fa-heart text-primary"></i>
-                                            @else
-                                                <i class="far fa-heart text-primary" ></i>
-                                            @endif
-                                        </button>
-                                    </form>
+                                    @if(auth('user_accounts')->user()->hasVerifiedEmail())
+                                        <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
+                                        @csrf
+                                            <button type="submit" class="btn btn-light btn-square me-3">
+                                                @if($user && $user->favorites && $user->favorites->contains($job->id))
+                                                    <i class="far fa-solid fa-heart text-primary"></i>
+                                                @else
+                                                    <i class="far fa-heart text-primary" ></i>
+                                                @endif
+                                            </button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('verification.notice') }}" class="btn btn-light btn-square me-3" onclick="alert('Silakan verifikasi email untuk menambahkan job ke favorit.')">
+                                            <i class="far fa-heart text-primary me-1"></i>
+                                        </a>
+                                    @endif
                                     @else
                                     <a href="{{ route('login') }}" class="btn btn-light btn-square me-3" onclick="alert('Silakan login untuk menambahkan job ke favorit.')">
                                         <i class="far fa-heart text-primary me-1"></i>

@@ -22,11 +22,12 @@ class RedirectIfAuthenticated
             if (Auth::guard($guard)->check()) {
                 // Redirect berdasarkan guard
                 if ($guard === 'user_accounts') {
+                    $user = Auth::guard('user_accounts')->user();
+                    if (is_null($user->email_verified_at)) {
+                        return redirect()->route('verification.notice');
+                    }
                     return redirect()->route('welcome');
                 }
-                
-                // Default redirect untuk guard lain (admin, etc)
-                return redirect('/home');
             }
         }
 

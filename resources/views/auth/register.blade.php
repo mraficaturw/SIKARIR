@@ -1,10 +1,10 @@
-@extends('layouts.app')
+@extends('auth.layouts.auth-view')
 
-@section('content')
+@section('content-auth')
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h2 class="mb-4 text-center">Register</h2>
+            <h2 class="mb-4 text-center text-white">Register</h2>
 
             {{-- Alert sukses --}}
             @if(session('success'))
@@ -56,7 +56,7 @@
                     @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <div class="form-text text-muted">
+                    <div class="form-text">
                         Gunakan email kampus berakhiran <strong>@student.unsika.ac.id</strong>.
                     </div>
                 </div>
@@ -68,6 +68,7 @@
                         class="form-control @error('password') is-invalid @enderror"
                         id="password"
                         name="password"
+                        placeholder="Gunakan Sandi Yang Kuat"
                         required>
                     @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -81,13 +82,14 @@
                         class="form-control"
                         id="password_confirmation"
                         name="password_confirmation"
+                        placeholder="Ketik Ulang Sandi Kamu"
                         required>
                 </div>
 
                 {{-- Submit --}}
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary">Register</button>
-                    <a href="{{ route('login') }}" class="btn btn-link text-center">Sudah punya akun? Login</a>
+                    <a href="{{ route('login') }}" class="btn btn-link text-center text-white">Sudah punya akun? Login</a>
                 </div>
             </form>
         </div>

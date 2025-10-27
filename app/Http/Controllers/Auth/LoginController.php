@@ -25,11 +25,8 @@ class LoginController extends Controller
             $user = Auth::guard('user_accounts')->user();
 
             if (is_null($user->email_verified_at)) {
-                Auth::guard('user_accounts')->logout();
-
-                throw ValidationException::withMessages([
-                    'email' => 'Lakukan Verifikasi Email Terlebih Dahulu',
-                ]);
+                // Redirect to verification notice instead of logging out
+                return redirect()->route('verification.notice');
             }
 
             $request->session()->regenerate();
@@ -38,7 +35,7 @@ class LoginController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
+            'email' => __('auth.failed')
         ]);
     }
 

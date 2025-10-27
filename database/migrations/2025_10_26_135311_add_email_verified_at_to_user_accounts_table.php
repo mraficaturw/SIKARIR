@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
+        Schema::table('user_accounts', function (Blueprint $table) {
+            if (!Schema::hasColumn('user_accounts', 'email_verified_at')) {
+                $table->timestamp('email_verified_at')->nullable()->after('email');
+            }
         });
     }
 
@@ -21,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('user_accounts', function (Blueprint $table) {
             //
         });
     }

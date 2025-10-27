@@ -7,8 +7,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use App\Http\Requests\Auth\VerifyEmailRequest;
+use App\Http\Controllers\Auth\VerificationController;
 
 // Public routes
 Route::get('/', [InternjobController::class, 'index'])->name('welcome');
@@ -25,27 +26,28 @@ Route::middleware('guest:user_accounts')->group(function () {
     // Password Reset Routes
     Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-    Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+    Route::get('reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [ResetPasswordController::class, 'changePassword'])->name('password.change');
+    Route::get('password-change-verify/{token}', [ResetPasswordController::class, 'verifyPasswordChange'])->name('password.change.verify');
 });
+
+// Email verification routes (tidak memerlukan auth untuk verifikasi)
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth:user_accounts')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user('user_accounts')->sendEmailVerificationNotification();
+    return back()->with('message', 'Link verifikasi sudah dikirim ulang ke email kamu.');
+})->middleware(['auth:user_accounts', 'throttle:6,1'])->name('verification.send');
 
 // Protected routes (harus login)
 Route::middleware('auth:user_accounts')->group(function () {
-    
-    // Email verification routes (mengharuskan auth)
-    Route::get('/email/verify', function () {
-        return view('auth.verify-email');
-    })->name('verification.notice');
 
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
-        return redirect()->route('welcome')->with('success', 'Email kamu berhasil diverifikasi!');
-    })->middleware('signed')->name('verification.verify');
-
-    Route::post('/email/verification-notification', function (Request $request) {
-        $request->user('user_accounts')->sendEmailVerificationNotification();
-        return back()->with('message', 'Link verifikasi sudah dikirim ulang ke email kamu.');
-    })->middleware('throttle:6,1')->name('verification.send');
+    // Logout route
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
     // Routes yang hanya boleh diakses oleh user yang sudah diverifikasi
     Route::middleware('verified')->group(function () {

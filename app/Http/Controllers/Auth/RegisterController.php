@@ -49,15 +49,18 @@ class RegisterController extends Controller
         // Kirim email verifikasi otomatis
         try {
             $user->sendEmailVerificationNotification();
-            return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan cek email untuk verifikasi.');
+            // Login user dan redirect ke halaman verifikasi
+            Auth::guard('user_accounts')->login($user);
+            return redirect()->route('verification.notice')->with('success', 'Pendaftaran berhasil! Silakan cek email untuk verifikasi.');
         } catch (Exception $e) {
             Log::error('Failed to send verification email', [
                 'email' => $user->email,
                 'error' => $e->getMessage(),
             ]);
 
-            // Opsi: tandai user sebagai unverified (default), dan informasikan user
-            return redirect()->route('login')->with('warning', 'Pendaftaran berhasil, tetapi kami gagal mengirim email verifikasi. Silakan hubungi admin.');
+            // Jika email gagal dikirim, tetap login user agar bisa akses halaman verifikasi dan coba kirim ulang
+            Auth::guard('user_accounts')->login($user);
+            return redirect()->route('verification.notice')->with('warning', 'Pendaftaran berhasil, tetapi kami gagal mengirim email verifikasi. Silakan gunakan tombol "Kirim Ulang Email Verifikasi" di halaman ini.');
         }
     }
 }

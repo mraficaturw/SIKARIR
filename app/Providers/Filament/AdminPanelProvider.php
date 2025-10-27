@@ -27,12 +27,12 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->brandName('Admin Panel SIKARIR')
+            ->brandName(config('app.name'))
             ->id('admin')
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Indigo,
+                'primary' => '#00B074',
             ])
             ->topNavigation()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

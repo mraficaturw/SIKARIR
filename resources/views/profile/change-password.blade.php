@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('auth.layouts.auth-view')
 
-@section('content')
+@section('content-auth')
 <div class="container py-5">
-    <h2>Change Password</h2>
+    <h2 class="pb-0 pt-10"style="color:white">Change Password</h2>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
