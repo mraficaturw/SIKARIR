@@ -103,7 +103,7 @@
                     <div class="row g-4">
                         <div class="col-sm-12 col-md-8 d-flex align-items-center">
                             <img class="flex-shrink-0 img-fluid border rounded mb-3"
-                                src="{{ $job->logo ? asset('storage/logos/' . $job->logo) : asset('img/com-logo-1.jpg') }}"
+                                src="{{ $job->logo ? asset('storage/' . $job->logo) : asset('img/com-logo-1.jpg') }}"
                                 alt="Logo"
                                 width="60">
                                 <div class="text-start ps-4">

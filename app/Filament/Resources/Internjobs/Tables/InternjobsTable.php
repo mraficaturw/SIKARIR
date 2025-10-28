@@ -32,7 +32,7 @@ class InternjobsTable
                     ->sortable(),
                 ImageColumn::make('logo')
                     ->square()
-                    ->width(50),
+                    ->width(60),
                 TextColumn::make('category')
                     ->label('Fakultas')
                     ->searchable(),

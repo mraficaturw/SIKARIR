@@ -40,7 +40,7 @@
                     <div class="row g-4">
                         <div class="col-sm-12 col-md-8 d-flex align-items-center">
                             <img class="flex-shrink-0 img-fluid border rounded mb-3"
-                                src="{{ $job->logo ? asset('storage/logos/' . $job->logo) : asset('img/com-logo-1.jpg') }}"
+                                src="{{ $job->logo ? asset('storage/' . $job->logo) : asset('img/com-logo-1.jpg') }}"
                                 alt="Logo"
                                 width="60">
                                 <div class="text-start ps-4">
@@ -65,7 +65,7 @@
                                     @if(auth('user_accounts')->user()->hasVerifiedEmail())
                                         <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
                                         @csrf
-                                            <button type="submit" class="btn btn-light btn-square me-3">
+                                            <button type="submit" class="btn btn-light btn-square me-3"  onclick="alert('Berhasil Menambah Ke Favorit')">
                                                 @if($user && $user->favorites && $user->favorites->contains($job->id))
                                                     <i class="far fa-solid fa-heart text-primary"></i>
                                                 @else

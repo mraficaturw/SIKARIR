@@ -21,7 +21,9 @@
                 <div class="row gy-5 gx-4">
                     <div class="col-lg-8">
                         <div class="d-flex align-items-center mb-5">
-                            <img class="flex-shrink-0 img-fluid border rounded" src="img/com-logo-2.jpg" alt="" style="width: 80px; height: 80px;">
+                            <img class="flex-shrink-0 img-fluid border rounded mb-3"
+                                src="{{ $job->logo ? asset('storage/' . $job->logo) : asset('img/com-logo-1.jpg') }}"
+                                alt="Logo" style="width: 100px; height: 100px;">
                             <div class="text-start ps-4">
                                 <h3 class="mb-3">{{ $job->title }}</h3>
                                 <span class="text-truncate me-3"><i class="fa-solid fa-building text-primary me-2"></i> {{ $job->company }}</span>
