@@ -80,7 +80,7 @@
                             <p><i class="fa fa-angle-right text-primary me-2"></i>Last Update : {{ $job->updated_at->format('d-m-Y') }}</p>
                             <p><i class="fa fa-angle-right text-primary me-2"></i>Max Salary : Rp {{ number_format((int)$job->salary_max, 0, ',', '.') }}</p>
                             <p><i class="fa fa-angle-right text-primary me-2"></i>Location : {{ $job->location }}</p>
-                            <p class="m-0"><i class="fa fa-angle-right text-primary me-2"></i>Date Line: {{ $job->deadline->format('d-m-Y') }}</p>
+                            <p class="mb-0"><i class="fa fa-angle-right text-primary me-2"></i>Deadline: {{ $job->deadline->format('d-m-Y') }}</p>
                         </div>
                     </div>
 

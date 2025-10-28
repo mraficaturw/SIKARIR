@@ -93,6 +93,44 @@
 </div>
 <!-- Category End -->
 
+<!-- Mitra Start -->
+<section id="mitra" class="mitra-section">
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                    <div class="row g-0 about-bg rounded overflow-hidden">
+                        <div class="col-6 text-start">
+                            <img class="img-fluid w-100" src="{{ asset('img/mitra-1.png') }}">
+                        </div>
+                        <div class="col-6 text-start">
+                                <img class="img-fluid" src="{{ asset('img/mitra-2.jpg') }}" style="width: 85%; margin-top: 15%;">
+                        </div>
+                        <div class="col-6 text-end">
+                            <img class="img-fluid" src="{{ asset('img/mitra-3.jpg') }}" style="width: 85%;">
+                        </div>
+                        <div class="col-6 text-end">
+                            <img class="img-fluid w-100" src="{{ asset('img/mitra-4.jpg') }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                    <h1 class="mb-4">Bagaimana Caranya Untuk Menjadi Mitra Kami?</h1>
+                    <p class="mb-4">SIKARIR Unsika membuka kesempatan bagi institusi dan perusahaan yang ingin menjadi mitra magang. Mitra magang diharapkan dapat memberikan pengalaman kerja yang bermanfaat serta membimbing mahasiswa sesuai bidang keahliannya.</p>
+                    <p><i class="fa fa-check text-primary me-3"></i>Memiliki badan usaha atau institusi yang sah dan legal untuk menjalankan kegiatan magang.</p>
+                    <p><i class="fa fa-check text-primary me-3"></i>Mampu menyediakan program magang yang jelas, bermanfaat, dan sesuai dengan bidang keahlian mahasiswa.</p>
+                    <p><i class="fa fa-check text-primary me-3"></i>Bersedia membimbing mahasiswa selama masa magang sesuai aturan dan pedoman MOU.</p>
+                    <p><i class="fa fa-check text-primary me-3"></i>Menyediakan fasilitas dan lingkungan kerja yang aman serta mendukung pengembangan kompetensi mahasiswa.</p>
+                    <p><i class="fa fa-check text-primary me-3"></i>Bersedia memberikan laporan evaluasi dan rekomendasi terkait kinerja mahasiswa setelah magang selesai.</p>
+                    <p><i class="fa fa-check text-primary me-3"></i>Mengajukan Form Mitra Magang dengan menekan tombol di bawah.</p>
+                    <a class="btn btn-primary py-3 px-5 mt-3" href="https://docs.google.com/forms/d/e/1FAIpQLSe_oyx4bBy63cBRnl-cezSLUZaFnItkwu3nWv-fHJRsWuitAw/viewform?usp=dialog" target="_blank">Mari Berkolaborasi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Mitra End -->   
+
 <!-- Jobs Start -->
 <div class="container my-5">
     <h2 class="text-center fw-bold mb-4">Latest Jobs</h2>
@@ -109,7 +147,7 @@
                                 <div class="text-start ps-4">
                                     <h5 class="mb-3">{{ $job->title }}</h5>
                                     <span class="text-truncate me-3"><i class="fa-solid fa-building text-primary me-2"></i> {{ $job->company }}</span>
-                                    <span class="text-truncate me-3"><i class="fa fa- {{ $icons[$job->category] ?? 'fa-graduation-cap' }} text-primary me-2"></i>
+                                    <span class="text-truncate me-3"><i class="fa fa-{{ $icons[$job->category] ?? 'fa-graduation-cap' }} text-primary me-2"></i>
                                         @if(mb_strlen($job->category) > 23)
                                             {{ mb_substr($job->category, 0, 23) . '...' }}
                                         @else

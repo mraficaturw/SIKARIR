@@ -19,6 +19,28 @@
         <div class="navbar-nav ms-auto p-4 p-lg-0">
             <a href="{{ route('welcome') }}" class="nav-item nav-link @if(request()->routeIs('welcome')) active @endif">Home</a>
             <a href="{{ route('jobs') }}" class="nav-item nav-link @if(request()->routeIs('jobs')) active @endif">Jobs</a>
+            <a href="{{ route('welcome') }}#mitra" class="nav-item nav-link">Mitra</a>
+
+            @auth('user_accounts')
+                <div class="nav-item dropdown d-lg-none">
+                    <a class="nav-link dropdown-toggle" href="#" id="mobileUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ auth('user_accounts')->user()->name }}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="mobileUserDropdown">
+                        <li><a class="dropdown-item" href="{{ route('profile.show') }}">Profile</a></li>
+                        <li>
+                            @if (Route::has('logout'))
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">Logout</button>
+                                </form>
+                            @endif
+                        </li>
+                    </ul>
+                </div>
+            @else
+                <a href="{{ route('login') }}" class="nav-item nav-link d-lg-none">Login</a>
+            @endauth
         </div>
         @auth('user_accounts')
             <div class="nav-item dropdown d-none d-lg-block">

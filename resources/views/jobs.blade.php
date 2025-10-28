@@ -33,7 +33,7 @@
 <!-- Jobs Start -->
 <div class="container my-5" style="min-height: 60vh;">
     <h2 class="text-center fw-bold mb-4">Follow Your Dream Career Path!</h2>
-    <div class="tab-content"  style="overflow-y: auto; max-height: 400px;">
+    <div class="tab-content" style="overflow-y: auto; max-height: 400px;">
         <div class="tab-pane fade show p-0 active">
         @foreach($jobs as $job)
                 <div class="job-item p-4 mb-4">
