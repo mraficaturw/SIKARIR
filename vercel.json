@@ -6,6 +6,10 @@
     },
     "routes": [
         {
+            "src": "/build/(.*)",
+            "dest": "/public/build/"
+        },
+        {
             "src": "/css/(.*)",
             "dest": "/public/css/$1"
         },
@@ -28,6 +32,10 @@
         {
             "src": "/scss/(.*)",
             "dest": "/public/scss/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/api/index.php"
         }
     ],
     "env": {
@@ -43,6 +51,13 @@
         "MAIL_ENCRYPTION" :"tls",
         "MAIL_FROM_ADDRESS":"2210531170086@student.unsika.ac.id",
         "MAIL_FROM_NAME":"SIKARIR - UNSIKA",
+
+        "DB_CONNECTION":"mysql",
+        "DB_HOST":"5mofi0j2c0zruxgfnnr-mysql.services.clever-cloud.com",
+        "DB_PORT":"3306",
+        "DB_DATABASE":"b5mofi0j2c0zruxgfnnr",
+        "DB_USERNAME":"ugqvqkwpaoxcm8xa",
+        "DB_PASSWORD":"Vd3PFisaInSfdTGgVDGt",
  
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
@@ -54,5 +69,6 @@
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
-    }
+    },
+    "outputDirectory": "public"
 }
