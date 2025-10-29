@@ -34,6 +34,15 @@
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "",
+
+        "MAIL_MAILER":"smtp",
+        "MAIL_HOST":"smtp.gmail.com",
+        "MAIL_PORT":"587",
+        "MAIL_USERNAME":"2210631170086@student.unsika.ac.id",
+        "MAIL_PASSWORD":"xybnuozbyagexhhn",
+        "MAIL_ENCRYPTION" :"tls",
+        "MAIL_FROM_ADDRESS":"2210531170086@student.unsika.ac.id",
+        "MAIL_FROM_NAME":"SIKARIR - UNSIKA",
  
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
