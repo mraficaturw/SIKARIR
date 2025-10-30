@@ -105,3 +105,11 @@ Route::middleware('auth:user_accounts')->group(function () {
     Route::post('/jobs/{id}/favorite-toggle', [InternjobController::class, 'toggleFavorite'])->name('job.favorite.toggle');
     Route::post('/jobs/{id}/applied-toggle', [InternjobController::class, 'toggleApplied'])->name('job.applied.toggle');
 });
+
+Route::get('/debug-scheme', function (Request $request) {
+    return [
+        'scheme' => $request->getScheme(),
+        'host' => $request->getHost(),
+        'url' => $request->fullUrl(),
+    ];
+});
