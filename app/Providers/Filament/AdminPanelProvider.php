@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(config('app.name'))
             ->id('admin')
             ->path('admin')
-            ->authGuard('web')
+            ->authGuard('admin')
             ->login()
             ->colors([
                 'primary' => '#00B074',
