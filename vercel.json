@@ -53,11 +53,11 @@
         "MAIL_FROM_NAME":"SIKARIR - UNSIKA",
 
         "DB_CONNECTION":"mysql",
-        "DB_HOST":"5mofi0j2c0zruxgfnnr-mysql.services.clever-cloud.com",
-        "DB_PORT":"3306",
-        "DB_DATABASE":"b5mofi0j2c0zruxgfnnr",
-        "DB_USERNAME":"ugqvqkwpaoxcm8xa",
-        "DB_PASSWORD":"Vd3PFisaInSfdTGgVDGt",
+        "DB_HOST":"ninlh1.h.filess.io",
+        "DB_PORT":"3307",
+        "DB_DATABASE":"sikarir_unknownnor",
+         "DB_USERNAME":"sikarir_unknownnor",
+        "DB_PASSWORD":"18aebab90012c913da8ce7e92a97c67043b34f0e",
  
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
