@@ -41,6 +41,7 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "true",
+        "APP_KEY":"base64:eaSAKSVv54bS4pnAZX1vvhTrKm8wr/nsNV8tgGZ3CEc=",
         "APP_URL": "",
 
         "MAIL_MAILER":"smtp",
