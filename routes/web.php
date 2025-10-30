@@ -114,12 +114,11 @@ Route::get('/debug-scheme', function (Request $request) {
     ];
 });
 
-/** @var \Illuminate\Contracts\Auth\Guard $auth */
-$auth = auth();
-
-return response()->json([
-    'auth_guard' => config('auth.defaults.guard'),
-    'user' => $auth->user(),
-    'https' => request()->isSecure(),
-]);
+Route::get('/debug-auth', function () {
+    return response()->json([
+        'auth_guard' => config('auth.defaults.guard'),
+        'user' => Auth::user(),
+        'https' => request()->isSecure(),
+    ]);
+});
 
