@@ -113,3 +113,11 @@ Route::get('/debug-scheme', function (Request $request) {
         'url' => $request->fullUrl(),
     ];
 });
+
+Route::get('/debug-auth', function () {
+    return [
+        'auth_guard' => config('auth.defaults.guard'),
+        'user' => \Illuminate\Support\Facades\Auth::user(),
+        'https' => request()->isSecure(),
+    ];
+});
