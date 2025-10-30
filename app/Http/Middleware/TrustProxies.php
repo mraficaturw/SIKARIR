@@ -12,7 +12,7 @@ class TrustProxies extends Middleware
      *
      * @var array<int, string>|string|null
      */
-    protected $proxies = '*'; // <- izinkan semua proxy (Vercel termasuk)
+    protected $proxies = '*'; // <- penting! biarkan * agar semua proxy dipercaya
 
     /**
      * The headers that should be used to detect proxies.

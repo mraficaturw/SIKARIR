@@ -3,34 +3,29 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Paginator::useBootstrapFive();
 
+        // Jika environment production, paksa https
         if ($this->app->environment('production')) {
-            \URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
-    // Tambahan khusus Vercel / proxy
+        // Deteksi proxy dari Vercel (X-Forwarded-Proto)
         if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-            \URL::forceScheme('https');
+            URL::forceScheme('https');
+        }
+
+        // Atau pakai Request facade
+        if (Request::server('HTTP_X_FORWARDED_PROTO') === 'https') {
+            URL::forceScheme('https');
         }
     }
-
 }
