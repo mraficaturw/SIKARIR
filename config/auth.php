@@ -14,10 +14,9 @@ return [
     */
 
     'defaults' => [
-       'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+    'guard' => 'web', // default untuk user biasa
+    'passwords' => 'user_accounts',
     ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -36,23 +35,19 @@ return [
     |
     */
 
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
-
-        'user_accounts' => [
-            'driver' => 'session',
-            'provider' => 'user_accounts',
-        ],
-
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+   'guards' => [
+    // Guard untuk user biasa
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'user_accounts',
     ],
 
+    // Guard untuk Filament admin
+    'admin' => [
+        'driver' => 'session',
+        'provider' => 'admin',
+    ],
+],
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -71,21 +66,18 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
-
-        'user_accounts' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\UserAccount::class,
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+    // Model untuk admin Filament
+    'admin' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
     ],
+
+    // Model untuk user biasa
+    'user_accounts' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\UserAccount::class,
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -106,8 +98,8 @@ return [
     */
 
     'passwords' => [
-    'users' => [
-        'provider' => 'users',
+    'admin' => [
+        'provider' => 'admin',
         'table' => 'password_reset_tokens',
         'expire' => 60,
         'throttle' => 60,
