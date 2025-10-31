@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-    'guard' => 'web', // default untuk user biasa
-    'passwords' => 'user_accounts',
+        'guard' => env('AUTH_GUARD', 'web'),
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
     /*
@@ -35,19 +35,23 @@ return [
     |
     */
 
-   'guards' => [
-    // Guard untuk user biasa
-    'web' => [
-        'driver' => 'session',
-        'provider' => 'user_accounts',
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'user_accounts' => [
+            'driver' => 'session',
+            'provider' => 'user_accounts',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
-    // Guard untuk Filament admin
-    'admin' => [
-        'driver' => 'session',
-        'provider' => 'admin',
-    ],
-],
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -66,18 +70,21 @@ return [
     */
 
     'providers' => [
-    // Model untuk admin Filament
-    'admin' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\User::class,
-    ],
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
 
-    // Model untuk user biasa
-    'user_accounts' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\UserAccount::class,
+        'user_accounts' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserAccount::class,
+        ],
+
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
     ],
-],
 
     /*
     |--------------------------------------------------------------------------
@@ -98,8 +105,8 @@ return [
     */
 
     'passwords' => [
-    'admin' => [
-        'provider' => 'admin',
+    'users' => [
+        'provider' => 'users',
         'table' => 'password_reset_tokens',
         'expire' => 60,
         'throttle' => 60,
