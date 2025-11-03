@@ -26,6 +26,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(30),
                 'logo' => null,
                 'category' => 'Fakultas Ilmu Komputer',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Marketing Intern',
@@ -39,6 +40,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(25),
                 'logo' => null,
                 'category' => 'Fakultas Ekonomi dan Bisnis',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Mechanical Engineer Intern',
@@ -52,6 +54,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(20),
                 'logo' => null,
                 'category' => 'Fakultas Teknik',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Legal Intern',
@@ -65,6 +68,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(15),
                 'logo' => null,
                 'category' => 'Fakultas Hukum',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Nursing Intern',
@@ -78,6 +82,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(10),
                 'logo' => null,
                 'category' => 'Fakultas Kesehatan',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Agricultural Intern',
@@ -91,6 +96,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(35),
                 'logo' => null,
                 'category' => 'Fakultas Pertanian',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Political Science Intern',
@@ -104,6 +110,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(40),
                 'logo' => null,
                 'category' => 'Fakultas Ilmu Sosial dan Politik',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Education Intern',
@@ -117,6 +124,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(45),
                 'logo' => null,
                 'category' => 'Fakultas Keguruan dan Ilmu Pendidikan',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Islamic Studies Intern',
@@ -130,6 +138,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(50),
                 'logo' => null,
                 'category' => 'Fakultas Agama Islam',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
             [
                 'title' => 'Data Analyst Intern',
@@ -143,6 +152,7 @@ class InternjobSeeder extends Seeder
                 'deadline' => Carbon::now()->addDays(55),
                 'logo' => null,
                 'category' => 'Fakultas Ilmu Komputer',
+                'apply_url' => 'https://techcorp.com/apply',
             ],
         ];
 
