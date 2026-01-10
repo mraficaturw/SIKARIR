@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\internjob;
+use App\Models\Internjob;
 use Carbon\Carbon;
 
 class InternjobSeeder extends Seeder
@@ -157,7 +157,7 @@ class InternjobSeeder extends Seeder
         ];
 
         foreach ($jobs as $job) {
-            internjob::create($job);
+            Internjob::create($job);
         }
     }
 }

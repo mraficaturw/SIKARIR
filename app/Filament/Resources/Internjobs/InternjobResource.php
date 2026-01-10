@@ -7,7 +7,7 @@ use App\Filament\Resources\Internjobs\Pages\EditInternjob;
 use App\Filament\Resources\Internjobs\Pages\ListInternjobs;
 use App\Filament\Resources\Internjobs\Schemas\InternjobForm;
 use App\Filament\Resources\Internjobs\Tables\InternjobsTable;
-use App\Models\internjob;
+use App\Models\Internjob;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class InternjobResource extends Resource
 {
-    protected static ?string $model = internjob::class;
+    protected static ?string $model = Internjob::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
