@@ -12,4 +12,4 @@ if (
 // --- End fix --- //
 
 
-require __DIR__. '/../public/index.php';
+require __DIR__ . '/../public/index.php';
