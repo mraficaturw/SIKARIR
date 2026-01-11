@@ -167,6 +167,7 @@ SIKARIR/
 - 🔍 **Real-time Search** - Pencarian lowongan secara real-time
 - ❤️ **Favorites System** - Sistem favorit yang responsif
 - 📱 **Better Mobile Experience** - Tampilan mobile yang lebih optimal
+- 🐛 **Bug Fix: Admin Panel Access** - Perbaikan error "Forbidden" saat mengakses Filament Admin Panel
 
 ## 🤝 Contributing
 
