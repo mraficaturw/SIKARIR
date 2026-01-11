@@ -30,6 +30,11 @@ class JobSearch extends Component
         $this->resetPage();
     }
 
+    public function performSearch()
+    {
+        $this->resetPage();
+    }
+
     public function getFacultiesProperty(): array
     {
         return [

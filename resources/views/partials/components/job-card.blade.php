@@ -22,8 +22,8 @@
     <div class="job-meta">
         <span class="job-meta-item">
             <i class="fa fa-graduation-cap" aria-hidden="true"></i>
-            @if(mb_strlen($job->category) > 18)
-                {{ mb_substr($job->category, 0, 18) . '...' }}
+            @if(mb_strlen($job->category) > 15)
+                {{ mb_substr($job->category, 0, 15) . '...' }}
             @else
                 {{ $job->category }}
             @endif

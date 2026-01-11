@@ -24,12 +24,18 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <div class="btn-primary-modern w-100 text-center" style="padding: 0.75rem 1rem; opacity: 0.7;" wire:loading>
-                            <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
-                        </div>
-                        <div wire:loading.remove class="btn-primary-modern w-100 text-center" style="padding: 0.75rem 1rem; cursor: default;">
-                            <i class="fa fa-search me-2" aria-hidden="true"></i>Cari
-                        </div>
+                        <button type="button" 
+                                wire:click="performSearch" 
+                                wire:loading.attr="disabled"
+                                class="btn-primary-modern w-100 text-center" 
+                                style="padding: 0.75rem 1rem; border: none; cursor: pointer;">
+                            <span wire:loading.remove wire:target="performSearch, search, category">
+                                <i class="fa fa-search me-2" aria-hidden="true"></i>Cari
+                            </span>
+                            <span wire:loading wire:target="performSearch, search, category">
+                                <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -46,30 +52,32 @@
                 </div>
             </div>
             
-            <div wire:loading.delay class="text-center py-4">
+            <div wire:loading.delay wire:target="performSearch, search, category" class="text-center py-4">
                 <div class="spinner-border text-success" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
             
-            <div wire:loading.remove>
+            <div wire:loading.remove wire:target="performSearch, search, category">
                 @if($jobs->count() > 0)
                     <div class="row g-4">
                         @foreach($jobs as $job)
-                            <div class="col-lg-6" data-animate>
+                            <div class="col-lg-6">
                                 <div class="job-card-modern">
                                     <div class="job-header">
                                         <img class="company-logo" src="{{ $job->logo_url }}" alt="{{ $job->company->company_name ?? 'Company' }}" loading="lazy" width="60" height="60">
                                         <div style="flex: 1; min-width: 0;">
                                             <h5 class="job-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $job->title }}</h5>
-                                            <a href="{{ route('company.detail', $job->company_id) }}" class="company-name text-decoration-none">
-                                                <i class="fa fa-building" aria-hidden="true"></i>
-                                                {{ $job->company->company_name ?? 'Unknown Company' }}
-                                            </a>
-                                            <span class="company-name" style="pointer-events: none; margin-top: 0.25rem;">
-                                                <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
-                                                {{ $job->location ?? 'Indonesia' }}
-                                            </span>
+                                            <div class="d-flex align-items-center gap-3 flex-wrap">
+                                                <a href="{{ route('company.detail', $job->company_id) }}" class="company-name text-decoration-none">
+                                                    <i class="fa fa-building" aria-hidden="true"></i>
+                                                    {{ $job->company->company_name ?? 'Unknown Company' }}
+                                                </a>
+                                                <span class="company-name" style="pointer-events: none; margin-top: 0.25rem;">
+                                                    <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+                                                    {{ $job->location ?? 'Indonesia' }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     

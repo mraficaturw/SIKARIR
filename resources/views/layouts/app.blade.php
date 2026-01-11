@@ -7,7 +7,7 @@
     <meta name="description" content="SIKARIR - Platform untuk mencari peluang magang terbaik bagi Mahasiswa Unsika">
     <meta name="theme-color" content="#00B074">
 
-    <title>SIKARIR - Sistem Informasi Karir</title>
+    <title>SIKARIR - Unsika Karir</title>
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('img/favicon.ico') }}" type="image/x-icon">
