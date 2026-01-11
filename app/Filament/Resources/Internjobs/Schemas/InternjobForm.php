@@ -40,6 +40,14 @@ class InternjobForm
                             ->imagePreviewHeight('100')
                             ->maxSize(2048)
                             ->visibility('public')
+                            ->saveUploadedFileUsing(function ($file, $state, $set, $get) {
+                                return \App\Services\ImageService::convertAndUpload(
+                                    $file,
+                                    'supabase',
+                                    'logos',
+                                    80
+                                );
+                            })
                             ->required(),
                         TextInput::make('email')
                             ->label('Email')
@@ -56,10 +64,14 @@ class InternjobForm
                 TextInput::make('salary_min')
                     ->placeholder('Contoh: 2000000')
                     ->numeric()
+                    ->live()
+                    ->lte('salary_max')
                     ->default(null),
                 TextInput::make('salary_max')
                     ->placeholder('Contoh: 3000000')
                     ->numeric()
+                    ->live()
+                    ->gte('salary_min')
                     ->default(null),
                 Textarea::make('description')
                     ->placeholder('Deskripsikan posisi magang secara detail...')

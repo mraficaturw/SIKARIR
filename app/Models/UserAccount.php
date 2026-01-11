@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class UserAccount extends Authenticatable implements MustVerifyEmail
 {
@@ -16,6 +17,7 @@ class UserAccount extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'avatar',
     ];
 
     protected $hidden = [
@@ -31,17 +33,29 @@ class UserAccount extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    /**
+     * Get the avatar URL from Supabase Storage
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if ($this->avatar) {
+            $baseUrl = config('filesystems.disks.supabase-avatar.url');
+            return rtrim($baseUrl, '/') . '/' . ltrim($this->avatar, '/');
+        }
+        return null;
+    }
+
     public function favorites()
     {
         return $this->belongsToMany(Internjob::class, 'user_account_favorites', 'user_account_id', 'internjob_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function appliedJobs()
     {
         return $this->belongsToMany(Internjob::class, 'user_account_applied', 'user_account_id', 'internjob_id')
-                    ->withPivot('applied_at')
-                    ->withTimestamps();
+            ->withPivot('applied_at')
+            ->withTimestamps();
     }
 
     public function hasFavorited($jobId): bool

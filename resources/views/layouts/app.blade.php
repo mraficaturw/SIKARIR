@@ -30,11 +30,8 @@
     <!-- Modern CSS (Design System) -->
     <link href="{{ asset('css/modern.css') }}" rel="stylesheet">
 
-    <!-- Livewire Styles -->
+    <!-- Livewire Styles (includes Alpine.js) -->
     @livewireStyles
-
-    <!-- Alpine.js for additional interactivity - Defer -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-white" x-data="{ mobileMenuOpen: false }">
 

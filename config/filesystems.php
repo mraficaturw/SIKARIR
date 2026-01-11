@@ -73,6 +73,19 @@ return [
             'visibility' => 'public',
         ],
 
+        'supabase-avatar' => [
+            'driver' => 's3',
+            'key' => env('SUPABASE_STORAGE_KEY'),
+            'secret' => env('SUPABASE_STORAGE_SECRET'),
+            'region' => env('SUPABASE_STORAGE_REGION', 'ap-southeast-1'),
+            'bucket' => 'avatar',
+            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
+            'url' => env('SUPABASE_AVATAR_URL', env('SUPABASE_STORAGE_URL')),
+            'use_path_style_endpoint' => true,
+            'throw' => false,
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*

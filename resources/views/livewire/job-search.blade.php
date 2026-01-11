@@ -66,21 +66,21 @@
                                                 <i class="fa fa-building" aria-hidden="true"></i>
                                                 {{ $job->company->company_name ?? 'Unknown Company' }}
                                             </a>
+                                            <span class="company-name" style="pointer-events: none; margin-top: 0.25rem;">
+                                                <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+                                                {{ $job->location ?? 'Indonesia' }}
+                                            </span>
                                         </div>
                                     </div>
                                     
                                     <div class="job-meta">
                                         <span class="job-meta-item">
                                             <i class="fa fa-graduation-cap" aria-hidden="true"></i>
-                                            @if(mb_strlen($job->category) > 15)
-                                                {{ mb_substr($job->category, 0, 15) . '...' }}
+                                            @if(mb_strlen($job->category) > 18)
+                                                {{ mb_substr($job->category, 0, 18) . '...' }}
                                             @else
                                                 {{ $job->category }}
                                             @endif
-                                        </span>
-                                        <span class="job-meta-item">
-                                            <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
-                                            {{ $job->location ?? 'Indonesia' }}
                                         </span>
                                         <span class="job-meta-item">
                                             <i class="fa fa-money-bill-wave" aria-hidden="true"></i>
@@ -89,10 +89,17 @@
                                     </div>
                                     
                                     <div class="job-footer">
-                                        <span class="deadline">
-                                            <i class="far fa-calendar-alt" aria-hidden="true"></i>
-                                            Deadline: {{ $job->deadline->format('d M Y') }}
-                                        </span>
+                                        @if($job->deadline < now())
+                                            <span class="deadline text-danger" style="font-weight: 600;">
+                                                <i class="far fa-calendar-times" aria-hidden="true"></i>
+                                                Tidak menerima pendaftaran lagi
+                                            </span>
+                                        @else
+                                            <span class="deadline">
+                                                <i class="far fa-calendar-alt" aria-hidden="true"></i>
+                                                Deadline: {{ $job->deadline->format('d M Y') }}
+                                            </span>
+                                        @endif
                                         
                                         <div class="job-actions">
                                             <livewire:favorite-button :job-id="$job->id" :wire:key="'fav-'.$job->id" />

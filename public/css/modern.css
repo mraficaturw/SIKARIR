@@ -411,6 +411,7 @@ textarea:focus-visible {
     border-radius: var(--radius-xl) !important;
     padding: 0.75rem 1.5rem !important;
     font-weight: 600 !important;
+    color: white !important;
     box-shadow: 0 4px 14px 0 rgba(0, 176, 116, 0.3) !important;
     transition: all var(--transition-base) !important;
 }

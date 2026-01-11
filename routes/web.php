@@ -84,6 +84,8 @@ Route::post('/logout', function (Request $request) {
 */
 Route::middleware(['auth:user_accounts', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'editForm'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::get('/change-password', [ProfileController::class, 'changePasswordForm'])->name('profile.change-password');
     Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password.post');
 });

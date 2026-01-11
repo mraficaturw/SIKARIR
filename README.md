@@ -1,4 +1,4 @@
-# SIKARIR - Sistem Informasi Karir
+# SIKARIR - Sistem Informas Karir / Unsika Karir
 
 <p align="center">
   <img src="public/images/logo.png" width="200" alt="SIKARIR Logo">

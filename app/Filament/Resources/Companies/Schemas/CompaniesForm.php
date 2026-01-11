@@ -49,6 +49,14 @@ class CompaniesForm
                     ->maxSize(2048)
                     ->visibility('public')
                     ->hint('Ukuran gambar yang disarankan: 200x200 piksel untuk hasil terbaik.')
+                    ->saveUploadedFileUsing(function ($file, $state, $set, $get) {
+                        return \App\Services\ImageService::convertAndUpload(
+                            $file,
+                            'supabase',
+                            'logos',
+                            80
+                        );
+                    })
                     ->columnSpanFull(),
             ]);
     }
