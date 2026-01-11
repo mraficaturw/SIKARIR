@@ -11,8 +11,8 @@ class Internjob extends Model
 
     protected $fillable = [
         'title',
-        'company',
-        'location', 
+        'company_id',
+        'location',
         'type',
         'salary_min',
         'salary_max',
@@ -20,7 +20,6 @@ class Internjob extends Model
         'responsibility',
         'qualifications',
         'deadline',
-        'logo',
         'category',
         'apply_url',
     ];
@@ -30,6 +29,25 @@ class Internjob extends Model
         'salary_min' => 'decimal:2',
         'salary_max' => 'decimal:2',
     ];
+
+    /**
+     * Get the company that owns the internjob
+     */
+    public function company()
+    {
+        return $this->belongsTo(companies::class, 'company_id');
+    }
+
+    /**
+     * Get the logo URL from Company relationship
+     */
+    public function getLogoUrlAttribute(): string
+    {
+        if ($this->company) {
+            return $this->company->logo_url;
+        }
+        return asset('img/com-logo-1.jpg');
+    }
 
     /**
      * Relasi dengan users yang memfavoritkan job ini
@@ -45,6 +63,6 @@ class Internjob extends Model
     public function appliedBy()
     {
         return $this->belongsToMany(UserAccount::class, 'user_account_applied', 'internjob_id', 'user_account_id')
-                    ->withPivot('applied_at');
+            ->withPivot('applied_at');
     }
 }

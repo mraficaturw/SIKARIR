@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\companies;
 use App\Models\Internjob;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
@@ -54,13 +55,15 @@ class InternjobController extends Controller
         ];
 
         // Query jobs with filters
-        $query = Internjob::query();
+        $query = Internjob::with('company');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('company', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%');
+                    ->orWhereHas('company', function ($cq) use ($search) {
+                        $cq->where('company_name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
@@ -68,7 +71,7 @@ class InternjobController extends Controller
             $query->where('category', $category);
         }
 
-        $jobs = $query->orderBy('created_at', 'desc')->limit(5)->get();
+        $jobs = $query->orderBy('created_at', 'desc')->limit(6)->get();
 
         // Count jobs per category
         $category_counts = [];
@@ -89,13 +92,15 @@ class InternjobController extends Controller
         $category = $request->get('category');
 
         // Query jobs with filters
-        $query = Internjob::query();
+        $query = Internjob::with('company');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('company', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%');
+                    ->orWhereHas('company', function ($cq) use ($search) {
+                        $cq->where('company_name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
@@ -108,7 +113,7 @@ class InternjobController extends Controller
         // Get user dengan eager loading
         /** @var UserAccount|null $user */
         $user = Auth::guard('user_accounts')->user();
-        
+
         // Jika user login, load relationships-nya (only if it's an Eloquent model)
         if ($user instanceof UserAccount) {
             $user->load(['favorites', 'appliedJobs']);
@@ -135,11 +140,11 @@ class InternjobController extends Controller
      */
     public function show($id)
     {
-        $job = Internjob::findOrFail($id);
-        
+        $job = Internjob::with('company')->findOrFail($id);
+
         // Get user dengan eager loading
         $user = Auth::guard('user_accounts')->user();
-        
+
         // Jika user login, ensure we have an Eloquent UserAccount instance with relationships
         if ($user && $user instanceof UserAccount && $user->getKey()) {
             $user = UserAccount::with(['favorites', 'appliedJobs'])->find($user->getKey());
@@ -155,7 +160,7 @@ class InternjobController extends Controller
     {
         /** @var UserAccount $user */
         $user = Auth::guard('user_accounts')->user();
-        
+
         if (!$user) {
             if (request()->expectsJson()) {
                 return response()->json(['error' => 'Unauthenticated'], 401);
@@ -193,7 +198,7 @@ class InternjobController extends Controller
     {
         /** @var UserAccount $user */
         $user = Auth::guard('user_accounts')->user();
-        
+
         if (!$user) {
             if (request()->expectsJson()) {
                 return response()->json(['error' => 'Unauthenticated'], 401);
@@ -222,5 +227,15 @@ class InternjobController extends Controller
         }
 
         return back()->with('success', $message);
+    }
+
+    /**
+     * Display company details
+     */
+    public function companyDetail($id)
+    {
+        $company = companies::with('internjobs')->findOrFail($id);
+
+        return view('company-detail', compact('company'));
     }
 }

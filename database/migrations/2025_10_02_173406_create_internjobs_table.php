@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('internjobs', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->string('company');
             $table->string('location');
             $table->string('type')->default('Internship');

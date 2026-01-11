@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Internjobs\Tables;
+namespace App\Filament\Resources\Companies\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,44 +9,43 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class InternjobsTable
+class CompaniesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('title')
-                    ->searchable(),
-                TextColumn::make('company.company_name')
-                    ->label('Company')
-                    ->searchable(),
-                ImageColumn::make('logo_url')
+                ImageColumn::make('logo')
                     ->label('Logo')
+                    ->getStateUsing(fn($record) => $record->logo_url)
                     ->square()
                     ->width(60),
-                TextColumn::make('location')
+                TextColumn::make('company_name')
+                    ->label('Nama Perusahaan')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->label('Email')
                     ->searchable(),
-                TextColumn::make('salary_min')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('salary_max')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('deadline')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('category')
-                    ->label('Fakultas')
-                    ->searchable(),
-                TextColumn::make('apply_url')
-                    ->label('Apply URL')
+                TextColumn::make('phone')
+                    ->label('Telepon')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
+                TextColumn::make('address')
+                    ->label('Alamat')
+                    ->limit(30)
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make('official_website')
+                    ->label('Website')
+                    ->url(fn($record) => $record->official_website)
+                    ->openUrlInNewTab()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('internjobs_count')
+                    ->label('Jumlah Lowongan')
+                    ->counts('internjobs')
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

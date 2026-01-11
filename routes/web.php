@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 | Public Routes
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [InternjobController::class, 'index'])->name('welcome');
 
 // Authentication Routes
@@ -95,6 +96,7 @@ Route::middleware(['auth:user_accounts', 'verified'])->group(function () {
 Route::get('/', [InternjobController::class, 'index'])->name('welcome');
 Route::get('/jobs', [InternjobController::class, 'jobs'])->name('jobs');
 Route::get('/job/{id}', [InternjobController::class, 'show'])->name('job.detail');
+Route::get('/company/{id}', [InternjobController::class, 'companyDetail'])->name('company.detail');
 
 /*
 |--------------------------------------------------------------------------
@@ -121,4 +123,3 @@ Route::get('/debug-auth', function () {
         'https' => request()->isSecure(),
     ]);
 });
-

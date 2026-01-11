@@ -2,12 +2,13 @@
 
 namespace App\Filament\Resources\Internjobs\Schemas;
 
+use App\Models\companies;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\FileUpload;
 
 class InternjobForm
 {
@@ -16,13 +17,40 @@ class InternjobForm
         return $schema
             ->components([
                 TextInput::make('title')
-                    ->label('position')
+                    ->label('Position')
                     ->placeholder('Contoh: Software Engineer Intern')
                     ->required(),
-                TextInput::make('company')
-                    ->placeholder('Contoh: PT. ABC Indonesia')
-                    ->required(),
+                Select::make('company_id')
+                    ->label('Perusahaan')
+                    ->relationship('company', 'company_name')
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->placeholder('Pilih Perusahaan')
+                    ->createOptionForm([
+                        TextInput::make('company_name')
+                            ->label('Nama Perusahaan')
+                            ->required(),
+                        FileUpload::make('logo')
+                            ->label('Logo Perusahaan')
+                            ->placeholder('Ukuran gambar yang disarankan: 200x200 piksel untuk hasil terbaik.')
+                            ->disk('supabase')
+                            ->directory('logos')
+                            ->image()
+                            ->imagePreviewHeight('100')
+                            ->maxSize(2048)
+                            ->visibility('public')
+                            ->required(),
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required(),
+                        TextInput::make('address')
+                            ->label('Alamat Kantor')
+                            ->required(),
+                    ]),
                 TextInput::make('location')
+                    ->label('Internship Placement Location')
                     ->placeholder('Contoh: Jakarta, Indonesia')
                     ->required(),
                 TextInput::make('salary_min')
@@ -46,16 +74,6 @@ class InternjobForm
                     ->default(null)
                     ->columnSpanFull(),
                 DatePicker::make('deadline'),
-                FileUpload::make('logo')
-                    ->image()
-                    ->imagePreviewHeight('150')
-                    ->imageResizeMode('cover')
-                    ->acceptedFileTypes(['image/*'])
-                    ->maxSize(2048)
-                    ->directory('logos')
-                    ->disk('public')
-                    ->hint('Ukuran gambar yang disarankan: 200x200 piksel untuk hasil terbaik.')
-                    ->required(false),
                 Select::make('category')
                     ->label('Fakultas')
                     ->options([
@@ -72,7 +90,7 @@ class InternjobForm
                     ->required()
                     ->placeholder('Pilih Fakultas'),
                 TextInput::make('apply_url')
-                    ->label('Apply URL')
+                    ->label('Link Untuk Apply')
                     ->url()
                     ->placeholder('https://example.com/apply'),
             ]);

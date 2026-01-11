@@ -1,61 +1,183 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIKARIR - Sistem Informasi Karir
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/logo.png" width="200" alt="SIKARIR Logo">
 </p>
 
-## About Laravel
+<p align="center">
+  <strong>Platform Informasi Lowongan Kerja & Magang untuk Mahasiswa</strong>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📖 Tentang SIKARIR
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+SIKARIR adalah platform berbasis web yang dirancang untuk membantu mahasiswa mencari informasi lowongan kerja dan magang. Dibangun dengan **Laravel 12** dan **Filament v4** untuk panel admin yang modern dan powerful.
 
-## Learning Laravel
+## ✨ Fitur Utama
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🎨 UI/UX Modern & User-Friendly
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Glassmorphism Design** - Tampilan modern dengan efek blur dan transparansi
+- **Gradient Effects** - Warna-warna gradient yang menarik dan eye-catching
+- **Smooth Animations** - Animasi yang halus menggunakan AOS (Animate On Scroll)
+- **SPA-like Experience** - Navigasi tanpa reload halaman menggunakan Livewire
+- **Responsive Design** - Tampilan optimal di semua ukuran perangkat
+- **Dark/Light Mode Support** - Dukungan tema gelap dan terang
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🏢 Manajemen Company
 
-## Laravel Sponsors
+- **Company Database** - Database perusahaan yang terintegrasi
+- **Company Detail Page** - Halaman detail perusahaan lengkap dengan:
+  - Informasi perusahaan (nama, alamat, website)
+  - Logo perusahaan
+  - Deskripsi perusahaan
+  - Daftar lowongan yang tersedia
+- **Company Profile** - Profil perusahaan yang terstruktur
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 💼 Manajemen Lowongan
 
-### Premium Partners
+- **Job Listings** - Daftar lowongan kerja dan magang
+- **Job Categories** - Kategorisasi lowongan (Full-time, Part-time, Magang, dll)
+- **Job Search** - Pencarian lowongan dengan filter real-time
+- **Job Detail** - Informasi lengkap lowongan termasuk:
+  - Rentang gaji
+  - Lokasi kerja
+  - Persyaratan
+  - Benefit
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 👤 Fitur User
 
-## Contributing
+- **Profile Management** - Kelola profil pengguna
+- **Favorites** - Simpan lowongan favorit
+- **Apply Status** - Lacak status lamaran
+- **Faculty-based Filtering** - Filter lowongan berdasarkan fakultas
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 🔐 Admin Panel (Filament v4)
 
-## Code of Conduct
+- **Dashboard** - Dashboard admin yang informatif
+- **CRUD Operations** - Kelola data dengan mudah
+- **User Management** - Manajemen pengguna
+- **Company Management** - Kelola data perusahaan
+- **Job Management** - Kelola lowongan kerja
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🛠️ Tech Stack
 
-## Security Vulnerabilities
+| Technology | Purpose |
+|------------|---------|
+| **Laravel 12** | PHP Framework |
+| **Filament v4** | Admin Panel |
+| **Livewire** | Reactive Components |
+| **Alpine.js** | Frontend Interactivity |
+| **Tailwind CSS** | Styling |
+| **PostgreSQL/MySQL** | Database |
+| **Supabase** | Cloud Database & Storage |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🚀 Getting Started
 
-## License
+### Prerequisites
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- PostgreSQL/MySQL Database
+
+### Installation
+
+1. **Clone repository**
+
+   ```bash
+   git clone https://github.com/mraficaturw/SIKARIR.git
+   cd SIKARIR
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   composer install
+   npm install
+   ```
+
+3. **Setup environment**
+
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Configure database**
+
+   Edit file `.env` dan sesuaikan konfigurasi database:
+
+   ```env
+   DB_CONNECTION=pgsql
+   DB_HOST=127.0.0.1
+   DB_PORT=5432
+   DB_DATABASE=sikarir
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   ```
+
+5. **Run migrations**
+
+   ```bash
+   php artisan migrate --seed
+   ```
+
+6. **Build assets & run server**
+
+   ```bash
+   npm run dev
+   php artisan serve
+   ```
+
+7. **Access the application**
+   - Frontend: `http://localhost:8000`
+   - Admin Panel: `http://localhost:8000/admin`
+
+## 📁 Project Structure
+
+```
+SIKARIR/
+├── app/
+│   ├── Filament/          # Filament admin resources
+│   ├── Http/
+│   │   └── Controllers/   # Controllers
+│   ├── Livewire/          # Livewire components
+│   └── Models/            # Eloquent models
+├── database/
+│   ├── migrations/        # Database migrations
+│   └── seeders/           # Database seeders
+├── resources/
+│   ├── css/               # Stylesheets
+│   ├── js/                # JavaScript files
+│   └── views/             # Blade templates
+│       └── livewire/      # Livewire views
+└── public/                # Public assets
+```
+
+## 📝 Recent Updates
+
+### v1.1.0 - UI/UX Enhancement Update
+
+- 🎨 **Redesigned UI** - Tampilan yang lebih modern dengan glassmorphism dan gradient effects
+- ⚡ **Improved Performance** - Optimasi performa dengan Livewire components
+- 🏢 **Company Integration** - Database perusahaan yang terintegrasi dengan `company_id` foreign key
+- 📄 **Company Detail Page** - Halaman detail perusahaan yang lengkap
+- 🔍 **Real-time Search** - Pencarian lowongan secara real-time
+- ❤️ **Favorites System** - Sistem favorit yang responsif
+- 📱 **Better Mobile Experience** - Tampilan mobile yang lebih optimal
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our contributing guidelines before submitting a pull request.
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+<p align="center">
+  Made with ❤️ by <strong>Rafi</strong>
+</p>

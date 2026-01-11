@@ -1,114 +1,184 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Header Start -->
-<div class="container-xxl py-5 bg-dark page-header mb-5">
-    <div class="container my-5 pt-5 pb-4">
-        <h1 class="display-3 text-white mb-3 animated slideInDown">Job Detail</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb text-uppercase">
-                <li class="breadcrumb-item"><a href="{{ route('welcome') }}">Home</a></li>
-                <li class="breadcrumb-item text-white active" aria-current="page">Job Detail</li>
+<!-- Page Header -->
+<section style="background: var(--gradient-hero); padding: 3rem 0;">
+    <div class="container">
+        <nav aria-label="breadcrumb" data-animate>
+            <ol class="breadcrumb mb-2" style="font-size: 0.875rem;">
+                <li class="breadcrumb-item"><a href="{{ route('welcome') }}" class="text-white-50 text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('jobs') }}" class="text-white-50 text-decoration-none">Jobs</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">Detail</li>
             </ol>
         </nav>
+        <h1 class="text-white fw-bold mb-0" data-animate>Detail Lowongan</h1>
     </div>
-</div>
-<!-- Header End -->
+</section>
 
-<!-- Job Detail Start -->
-        <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="container">
-                <div class="row gy-5 gx-4">
-                    <div class="col-lg-8">
-                        <div class="d-flex align-items-center mb-5">
-                            <img class="flex-shrink-0 img-fluid border rounded mb-3"
-                                src="{{ $job->logo ? asset('storage/' . $job->logo) : asset('img/com-logo-1.jpg') }}"
-                                alt="Logo" style="width: 100px; height: 100px;">
-                            <div class="text-start ps-4">
-                                <h3 class="mb-3">{{ $job->title }}</h3>
-                                <span class="text-truncate me-3"><i class="fa-solid fa-building text-primary me-2"></i> {{ $job->company }}</span>
-                                    <span class="text-truncate me-3"><i class="fa fa- {{ $icons[$job->category] ?? 'fa-graduation-cap' }} text-primary me-2"></i>
-                                        @if(mb_strlen($job->category) > 23)
-                                            {{ mb_substr($job->category, 0, 23) . '...' }}
-                                        @else
-                                            {{ $job->category }}
-                                        @endif
-                                    </span>
-                                    <span class="text-truncate me-0">
-                                        <i class="far fa-money-bill-alt text-primary me-2"></i>
-                                        Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - Rp {{ number_format((int)$job->salary_max, 0, ',', '.') }}
-                                    </span>
+<!-- Job Detail Content -->
+<section class="section-modern" style="padding-top: 2rem;">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Job Header Card -->
+                <div class="card-modern mb-4" data-animate>
+                    <div class="d-flex align-items-start gap-4 flex-wrap">
+                        <img src="{{ $job->logo_url }}" 
+                             alt="{{ $job->company->company_name ?? 'Company' }}" 
+                             class="rounded-modern-lg" 
+                             style="width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--gray-100);"
+                             loading="eager">
+                        <div style="flex: 1;">
+                            <h2 class="h4 fw-bold mb-2">{{ $job->title }}</h2>
+                            <div class="d-flex flex-wrap gap-3 text-muted" style="font-size: 0.9rem;">
+                                <a href="{{ route('company.detail', $job->company_id) }}" class="text-decoration-none text-muted">
+                                    <i class="fa fa-building text-primary me-2" aria-hidden="true"></i>{{ $job->company->company_name ?? 'Unknown Company' }}
+                                </a>
+                                <span><i class="fa fa-graduation-cap text-primary me-2" aria-hidden="true"></i>
+                                    @if(mb_strlen($job->category) > 20)
+                                        {{ mb_substr($job->category, 0, 20) . '...' }}
+                                    @else
+                                        {{ $job->category }}
+                                    @endif
+                                </span>
+                                <span><i class="fa fa-money-bill-wave text-primary me-2" aria-hidden="true"></i>Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - {{ number_format((int)$job->salary_max, 0, ',', '.') }}</span>
                             </div>
                         </div>
-
-                        <div class="mb-5">
-                            <h4 class="mb-3">Job description</h4>
-                            <p>{{ $job->description }}</p>
-                            <h4 class="mb-3">Responsibility</h4>
-                            <p>{{ $job->responsibility }}</p>
-                            <h4 class="mb-3">Qualifications</h4>
-                            <p>{{ $job->qualifications }}</p>
+                    </div>
+                </div>
+                
+                <!-- Description -->
+                <div class="card-modern mb-4" data-animate>
+                    <h3 class="h5 fw-bold mb-3"><i class="fa fa-file-alt text-primary me-2" aria-hidden="true"></i>Deskripsi Pekerjaan</h3>
+                    <p class="text-muted" style="white-space: pre-line;">{{ $job->description }}</p>
+                </div>
+                
+                <!-- Responsibility -->
+                <div class="card-modern mb-4" data-animate>
+                    <h3 class="h5 fw-bold mb-3"><i class="fa fa-tasks text-primary me-2" aria-hidden="true"></i>Tanggung Jawab</h3>
+                    <p class="text-muted" style="white-space: pre-line;">{{ $job->responsibility }}</p>
+                </div>
+                
+                <!-- Qualifications -->
+                <div class="card-modern mb-4" data-animate>
+                    <h3 class="h5 fw-bold mb-3"><i class="fa fa-check-circle text-primary me-2" aria-hidden="true"></i>Kualifikasi</h3>
+                    <p class="text-muted" style="white-space: pre-line;">{{ $job->qualifications }}</p>
+                </div>
+                
+                <!-- Apply Section -->
+                <div class="card-modern" data-animate style="background: linear-gradient(135deg, rgba(0, 176, 116, 0.05) 0%, rgba(0, 212, 170, 0.05) 100%);">
+                    <h3 class="h5 fw-bold mb-3"><i class="fa fa-paper-plane text-primary me-2" aria-hidden="true"></i>Cara Melamar</h3>
+                    <p class="text-muted mb-3">Silakan klik link di bawah untuk melamar langsung ke perusahaan:</p>
+                    <a href="{{ $job->apply_url }}" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       class="d-inline-flex align-items-center text-primary text-decoration-none mb-4" 
+                       style="word-break: break-all;">
+                        <i class="fa fa-external-link-alt me-2" aria-hidden="true"></i>{{ $job->apply_url }}
+                    </a>
+                    
+                    @auth('user_accounts')
+                        @if(auth('user_accounts')->user()->hasVerifiedEmail())
+                            <livewire:apply-button :job-id="$job->id" :apply-url="$job->apply_url" />
+                        @else
+                            <a href="{{ route('verification.notice') }}" class="btn-primary-modern w-100" style="padding: 1rem; font-size: 1rem; text-align: center;">
+                                <i class="fa fa-envelope me-2" aria-hidden="true"></i>Verifikasi Email untuk Menandai
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="btn-primary-modern w-100" style="padding: 1rem; font-size: 1rem; text-align: center;">
+                            <i class="fa fa-sign-in-alt me-2" aria-hidden="true"></i>Login untuk Menandai Applied
+                        </a>
+                    @endauth
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Job Summary -->
+                <div class="card-modern mb-4" style="position: sticky; top: 100px;" data-animate>
+                    <h3 class="h5 fw-bold mb-4"><i class="fa fa-info-circle text-primary me-2" aria-hidden="true"></i>Ringkasan</h3>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 44px; height: 44px; background: rgba(0, 176, 116, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+                                <i class="fa fa-calendar-plus text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Dipublikasi</div>
+                                <div class="fw-medium">{{ $job->created_at->format('d M Y') }}</div>
+                            </div>
                         </div>
-        
-                        <div class="col-12">
-                            <h4 class="mb-4">Apply For The Job</h4>
-                            <p><a href="{{ $job->apply_url }}" target="_blank" class="text-secondary">Apply Here : {{ $job->apply_url }}</a></p>
-                            @auth('user_accounts')
-                                @if(auth('user_accounts')->user()->hasVerifiedEmail())
-                                    <form method="POST" action="{{ route('job.applied.toggle', $job->id) }}">
-                                        @csrf
-                                            @if($user && $user->appliedJobs && $user->appliedJobs->contains($job->id))
-                                                <button type="submit" class="btn btn-danger w-100">Remove Apply Mark</button>
-                                            @else
-                                                <button type="submit" class="btn btn-success w-100">Mark as Applied</button>
-                                            @endif
-                                        </button>
-                                    </form>
-                                @else
-                                    <a href="{{ route('verification.notice') }}" class="btn btn-success w-100" onclick="alert('Silakan verifikasi email untuk menandai job sebagai applied.')">Mark as Applied</a>
-                                @endif
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-success w-100" onclick="alert('Silakan login untuk menandai job sebagai applied.')">Mark as Applied</a>
-                            @endauth
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 44px; height: 44px; background: rgba(0, 176, 116, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+                                <i class="fa fa-sync-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Terakhir Update</div>
+                                <div class="fw-medium">{{ $job->updated_at->format('d M Y') }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 44px; height: 44px; background: rgba(0, 176, 116, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+                                <i class="fa fa-money-bill-wave text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Gaji Maksimal</div>
+                                <div class="fw-medium">Rp {{ number_format((int)$job->salary_max, 0, ',', '.') }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 44px; height: 44px; background: rgba(0, 176, 116, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+                                <i class="fa fa-map-marker-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Lokasi</div>
+                                <div class="fw-medium">{{ $job->location ?? 'Indonesia' }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 44px; height: 44px; background: rgba(239, 68, 68, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+                                <i class="fa fa-clock text-danger"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Deadline</div>
+                                <div class="fw-medium text-danger">{{ $job->deadline->format('d M Y') }}</div>
+                            </div>
                         </div>
                     </div>
-        
-                    <div class="col-lg-4">
-                        <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
-                            <h4 class="mb-4">Job Summary</h4>
-                            <p><i class="fa fa-angle-right text-primary me-2"></i>Published On : {{ $job->created_at->format('d-m-Y') }}</p>
-                            <p><i class="fa fa-angle-right text-primary me-2"></i>Last Update : {{ $job->updated_at->format('d-m-Y') }}</p>
-                            <p><i class="fa fa-angle-right text-primary me-2"></i>Max Salary : Rp {{ number_format((int)$job->salary_max, 0, ',', '.') }}</p>
-                            <p><i class="fa fa-angle-right text-primary me-2"></i>Location : {{ $job->location }}</p>
-                            <p class="mb-0"><i class="fa fa-angle-right text-primary me-2"></i>Deadline: {{ $job->deadline->format('d-m-Y') }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Di bagian tombol favorite -->
-                    <div class="d-flex justify-content-start align-items-center mt-5 gap-3">
-                        <a class="btn btn-outline-primary" href="{{ route('jobs') }}">Back to Jobs</a>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('jobs') }}" class="btn-outline-modern flex-grow-1" style="text-align: center;">
+                            <i class="fa fa-arrow-left me-2" aria-hidden="true"></i>Kembali
+                        </a>
+                        
                         @auth('user_accounts')
                             @if(auth('user_accounts')->user()->hasVerifiedEmail())
-                                <form method="POST" action="{{ route('job.favorite.toggle', $job->id) }}">
-                                    @csrf
-                                    <button type="submit" class="btn btn-light btn-square">
-                                       @if($user && $user->favorites && $user->favorites->contains($job->id))
-                                            <i class="far fa-solid fa-heart text-primary"></i>
-                                        @else
-                                            <i class="far fa-heart text-primary"></i>
-                                        @endif
-                                    </button>
-                                </form>
+                                <div style="width: 52px; height: 52px;">
+                                    <livewire:favorite-button :job-id="$job->id" />
+                                </div>
                             @else
-                                <a href="{{ route('verification.notice') }}" class="btn btn-light btn-square" onclick="alert('Silakan verifikasi email untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
+                                <a href="{{ route('verification.notice') }}" class="btn-favorite" style="width: 52px; height: 52px;" aria-label="Verifikasi email untuk favorit">
+                                    <i class="far fa-heart" style="font-size: 1.25rem;" aria-hidden="true"></i>
+                                </a>
                             @endif
                         @else
-                            <a href="{{ route('login') }}" class="btn btn-light btn-square" onclick="alert('Silakan login untuk menambahkan job ke favorit.')"><i class="far fa-heart text-primary"></i></a>
+                            <a href="{{ route('login') }}" class="btn-favorite" style="width: 52px; height: 52px;" aria-label="Login untuk favorit">
+                                <i class="far fa-heart" style="font-size: 1.25rem;" aria-hidden="true"></i>
+                            </a>
                         @endauth
                     </div>
                 </div>
             </div>
         </div>
-<!-- Job Detail End -->
+    </div>
+</section>
 @endsection
-
