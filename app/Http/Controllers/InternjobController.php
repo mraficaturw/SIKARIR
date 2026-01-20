@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
  * - Menampilkan daftar semua lowongan dengan pagination
  * - Menampilkan detail lowongan
  * - Menampilkan detail perusahaan
- * - Toggle favorit dan status lamaran
+ * - Toggle favorit dan status lamarann
  * 
  * Controller ini banyak digunakan oleh route publik (tanpa login)
  * kecuali untuk fitur favorit dan lamaran yang butuh autentikasi.
