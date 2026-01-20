@@ -40,7 +40,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_KEY":"base64:eaSAKSVv54bS4pnAZX1vvhTrKm8wr/nsNV8tgGZ3CEc=",
         "APP_URL": "https://sikarir-umber.vercel.app",
         "FORCE_HTTPS":"true",
