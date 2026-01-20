@@ -1,119 +1,28 @@
-@extends('auth.layouts.auth-view')
-
-@section('content-auth')
-<h2 class="auth-title">Create Account</h2>
-<p class="auth-subtitle">Join SIKARIR to find your dream internship</p>
-
-{{-- Alert sukses --}}
-@if(session('success'))
-    <div class="alert alert-success mb-3" role="alert">
-        <i class="fa fa-check-circle me-2" aria-hidden="true"></i>{{ session('success') }}
-    </div>
-@endif
-
-{{-- Alert error --}}
-@if($errors->any())
-    <div class="alert alert-danger mb-3" role="alert">
-        <ul class="mb-0 list-unstyled">
-            @foreach($errors->all() as $error)
-                <li><i class="fa fa-exclamation-circle me-2" aria-hidden="true"></i>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-<form method="POST" action="{{ route('register') }}" id="registerForm" novalidate>
-    @csrf
-
-    {{-- Full Name --}}
-    <div class="mb-3">
-        <label for="name" class="form-label">Full Name</label>
-        <input type="text"
-            class="form-control @error('name') is-invalid @enderror"
-            id="name"
-            name="name"
-            value="{{ old('name') }}"
-            required
-            autofocus
-            autocomplete="name"
-            placeholder="e.g. John Doe">
-        @error('name')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#00B074">
+    <title>SIKARIR - Register</title>
+    <link rel="icon" href="{{ asset('img/favicon.ico') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/modern.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    @livewireStyles
+</head>
+<body class="auth-split-body">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <div id="main-content">
+        @livewire('auth-page', ['initialMode' => 'register'])
     </div>
 
-    {{-- Email --}}
-    <div class="mb-3">
-        <label for="email" class="form-label">Email Address</label>
-        <input type="email"
-            class="form-control @error('email') is-invalid @enderror"
-            id="email"
-            name="email"
-            value="{{ old('email') }}"
-            required
-            autocomplete="email"
-            placeholder="npm@student.unsika.ac.id"
-            pattern="^[a-zA-Z0-9._%+-]+@student\.unsika\.ac\.id$"
-            aria-describedby="emailHelp">
-        @error('email')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-        <div class="form-text" id="emailHelp">
-            <i class="fa fa-info-circle me-1" aria-hidden="true"></i>Use your university email ending with <strong>@student.unsika.ac.id</strong>
-        </div>
-    </div>
-
-    {{-- Password --}}
-    <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password"
-            class="form-control @error('password') is-invalid @enderror"
-            id="password"
-            name="password"
-            required
-            autocomplete="new-password"
-            placeholder="Create a strong password">
-        @error('password')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-    {{-- Confirm Password --}}
-    <div class="mb-4">
-        <label for="password_confirmation" class="form-label">Confirm Password</label>
-        <input type="password"
-            class="form-control"
-            id="password_confirmation"
-            name="password_confirmation"
-            required
-            autocomplete="new-password"
-            placeholder="Repeat your password">
-    </div>
-
-    {{-- Submit --}}
-    <div class="d-grid gap-3">
-        <button type="submit" class="btn btn-primary btn-lg">
-            <i class="fa fa-user-plus me-2" aria-hidden="true"></i>Create Account
-        </button>
-        <p class="text-center text-muted mb-0">
-            Already have an account? <a href="{{ route('login') }}" class="btn-link">Sign in here</a>
-        </p>
-    </div>
-</form>
-
-{{-- Validasi tambahan di sisi client --}}
-@push('js')
-<script>
-document.getElementById('registerForm').addEventListener('submit', function (e) {
-    const emailField = document.getElementById('email');
-    const email = emailField.value.trim();
-
-    if (!email.endsWith('@student.unsika.ac.id')) {
-        e.preventDefault();
-        alert('Gunakan email dengan domain @student.unsika.ac.id');
-        emailField.focus();
-    }
-});
-</script>
-@endpush
-@endsection
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @livewireScripts
+</body>
+</html>

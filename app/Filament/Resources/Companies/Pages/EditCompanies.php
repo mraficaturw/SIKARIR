@@ -13,7 +13,13 @@ class EditCompanies extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->successNotificationTitle('Deleted!'),
         ];
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Updated!';
     }
 }

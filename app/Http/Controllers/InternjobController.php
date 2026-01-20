@@ -2,78 +2,89 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\companies;
+use App\Models\Company;
 use App\Models\Internjob;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * ============================================================================
+ * INTERNJOB CONTROLLER
+ * ============================================================================
+ * Controller utama untuk menampilkan dan mengelola lowongan kerja/magang.
+ * 
+ * Fitur utama:
+ * - Menampilkan halaman utama dengan lowongan terbaru
+ * - Menampilkan daftar semua lowongan dengan pagination
+ * - Menampilkan detail lowongan
+ * - Menampilkan detail perusahaan
+ * - Toggle favorit dan status lamaran
+ * 
+ * Controller ini banyak digunakan oleh route publik (tanpa login)
+ * kecuali untuk fitur favorit dan lamaran yang butuh autentikasi.
+ * ============================================================================
+ */
 class InternjobController extends Controller
 {
     /**
-     * Display welcome page with jobs
+     * -------------------------------------------------------------------------
+     * Halaman Utama (Welcome Page)
+     * -------------------------------------------------------------------------
+     * Method ini menampilkan halaman utama SIKARIR dengan:
+     * - 6 lowongan terbaru
+     * - Daftar kategori fakultas dengan icon
+     * - Jumlah lowongan per kategori
+     * - Fitur pencarian
+     * 
+     * @param Request $request Data request berisi parameter search dan category
+     * @return \Illuminate\View\View Halaman welcome dengan data lowongan
      */
     public function index(Request $request)
     {
-        // Get search parameters
-        $search = $request->get('search');
-        $category = $request->get('category');
+        // -----------------------------------------------------------------
+        // Ambil Parameter Pencarian
+        // -----------------------------------------------------------------
+        // Parameter ini digunakan untuk filter lowongan
+        $search = $request->get('search');      // Kata kunci pencarian
+        $category = $request->get('category');   // Filter berdasarkan fakultas
 
-        // Faculties data - SESUAIKAN DENGAN INTERNJOB FORM
-        $faculties = [
-            'Fakultas Teknik' => 'Fakultas Teknik',
-            'Fakultas Ekonomi dan Bisnis' => 'Fakultas Ekonomi dan Bisnis',
-            'Fakultas Ilmu Komputer' => 'Fakultas Ilmu Komputer',
-            'Fakultas Hukum' => 'Fakultas Hukum',
-            'Fakultas Kesehatan' => 'Fakultas Kesehatan',
-            'Fakultas Pertanian' => 'Fakultas Pertanian',
-            'Fakultas Ilmu Sosial dan Politik' => 'Fakultas Ilmu Sosial dan Politik',
-            'Fakultas Keguruan dan Ilmu Pendidikan' => 'Fakultas Keguruan dan Ilmu Pendidikan',
-            'Fakultas Agama Islam' => 'Fakultas Agama Islam',
-        ];
+        // -----------------------------------------------------------------
+        // Data Fakultas dari Config
+        // -----------------------------------------------------------------
+        // Menggunakan config terpusat untuk menghindari duplikasi
+        $facultiesConfig = config('sikarir.faculties');
+        $faculties = collect($facultiesConfig)->mapWithKeys(fn($data, $key) => [$key => $data['label']])->toArray();
+        $icons = collect($facultiesConfig)->mapWithKeys(fn($data, $key) => [$key => $data['icon']])->toArray();
 
-        // Get user dengan eager loading
+        // -----------------------------------------------------------------
+        // Ambil Data User (Jika Login)
+        // -----------------------------------------------------------------
+        // Cek apakah ada user yang login untuk keperluan:
+        // - Menampilkan status favorit di setiap card lowongan
+        // - Menampilkan status sudah apply di setiap card lowongan
         /** @var UserAccount|null $user */
         $user = Auth::guard('user_accounts')->user();
 
-        // Jika user login, ensure we have an Eloquent UserAccount instance with relationships
+        // Jika user login, load relasi favorites dan appliedJobs
+        // Ini menggunakan eager loading untuk menghindari N+1 query problem
         if ($user instanceof UserAccount && $user->getKey()) {
             $user = UserAccount::with(['favorites', 'appliedJobs'])->find($user->getKey());
         }
 
-        // Icons for categories - SESUAIKAN DENGAN FAKULTAS BARU
-        $icons = [
-            'Fakultas Teknik' => 'fa-cogs',
-            'Fakultas Ekonomi dan Bisnis' => 'fa-chart-line',
-            'Fakultas Ilmu Komputer' => 'fa-laptop-code',
-            'Fakultas Hukum' => 'fa-gavel',
-            'Fakultas Kesehatan' => 'fa-stethoscope',
-            'Fakultas Pertanian' => 'fa-seedling',
-            'Fakultas Ilmu Sosial dan Politik' => 'fa-users',
-            'Fakultas Keguruan dan Ilmu Pendidikan' => 'fa-chalkboard-teacher',
-            'Fakultas Agama Islam' => 'fa-mosque',
-        ];
+        // -----------------------------------------------------------------
+        // Query Lowongan dengan Filter (menggunakan scopeSearch)
+        // -----------------------------------------------------------------
+        $jobs = Internjob::with('company')
+            ->search($search, $category)
+            ->orderBy('created_at', 'desc')
+            ->limit(config('sikarir.pagination.welcome_jobs_limit', 6))
+            ->get();
 
-        // Query jobs with filters
-        $query = Internjob::with('company');
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                    ->orWhereHas('company', function ($cq) use ($search) {
-                        $cq->where('company_name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhere('description', 'like', '%' . $search . '%');
-            });
-        }
-
-        if ($category) {
-            $query->where('category', $category);
-        }
-
-        $jobs = $query->orderBy('created_at', 'desc')->limit(6)->get();
-
-        // Count jobs per category
+        // -----------------------------------------------------------------
+        // Hitung Jumlah Lowongan per Kategori
+        // -----------------------------------------------------------------
+        // Digunakan untuk menampilkan badge jumlah di setiap kategori
         $category_counts = [];
         foreach ($faculties as $key => $name) {
             $category_counts[$key] = Internjob::where('category', $key)->count();
@@ -83,69 +94,74 @@ class InternjobController extends Controller
     }
 
     /**
-     * Display all jobs with pagination
+     * -------------------------------------------------------------------------
+     * Halaman Daftar Semua Lowongan
+     * -------------------------------------------------------------------------
+     * Method ini menampilkan semua lowongan dengan:
+     * - Pagination (10 lowongan per halaman)
+     * - Fitur pencarian dan filter kategori
+     * - Status favorit dan apply untuk user yang login
+     * 
+     * @param Request $request Data request berisi parameter search dan category
+     * @return \Illuminate\View\View Halaman jobs dengan pagination
      */
     public function jobs(Request $request)
     {
-        // Get search parameters
+        // Ambil parameter pencarian
         $search = $request->get('search');
         $category = $request->get('category');
 
-        // Query jobs with filters
-        $query = Internjob::with('company');
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                    ->orWhereHas('company', function ($cq) use ($search) {
-                        $cq->where('company_name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhere('description', 'like', '%' . $search . '%');
-            });
-        }
-
-        if ($category) {
-            $query->where('category', $category);
-        }
-
-        $jobs = $query->orderBy('created_at', 'desc')->paginate(10);
+        // -----------------------------------------------------------------
+        // Query Lowongan dengan Filter (menggunakan scopeSearch)
+        // -----------------------------------------------------------------
+        $jobs = Internjob::with('company')
+            ->search($search, $category)
+            ->orderBy('created_at', 'desc')
+            ->paginate(config('sikarir.pagination.jobs_per_page', 10));
         
-        // Get user dengan eager loading
+        // -----------------------------------------------------------------
+        // Ambil Data User (Jika Login)
+        // -----------------------------------------------------------------
         /** @var UserAccount|null $user */
         $user = Auth::guard('user_accounts')->user();
 
-        // Jika user login, load relationships-nya (only if it's an Eloquent model)
+        // Load relasi jika user adalah instance UserAccount
         if ($user instanceof UserAccount) {
             $user->load(['favorites', 'appliedJobs']);
         }
 
-        // Faculties data - SESUAIKAN DENGAN INTERNJOB FORM
-        $faculties = [
-            'Fakultas Teknik' => 'Fakultas Teknik',
-            'Fakultas Ekonomi dan Bisnis' => 'Fakultas Ekonomi dan Bisnis',
-            'Fakultas Ilmu Komputer' => 'Fakultas Ilmu Komputer',
-            'Fakultas Hukum' => 'Fakultas Hukum',
-            'Fakultas Kesehatan' => 'Fakultas Kesehatan',
-            'Fakultas Pertanian' => 'Fakultas Pertanian',
-            'Fakultas Ilmu Sosial dan Politik' => 'Fakultas Ilmu Sosial dan Politik',
-            'Fakultas Keguruan dan Ilmu Pendidikan' => 'Fakultas Keguruan dan Ilmu Pendidikan',
-            'Fakultas Agama Islam' => 'Fakultas Agama Islam',
-        ];
+        // Daftar fakultas untuk dropdown filter (dari config terpusat)
+        $faculties = collect(config('sikarir.faculties'))->mapWithKeys(fn($data, $key) => [$key => $data['label']])->toArray();
 
         return view('jobs', compact('jobs', 'user', 'faculties'));
     }
 
     /**
-     * Display job details
+     * -------------------------------------------------------------------------
+     * Halaman Detail Lowongan
+     * -------------------------------------------------------------------------
+     * Method ini menampilkan informasi lengkap satu lowongan:
+     * - Judul dan nama perusahaan
+     * - Lokasi dan rentang gaji
+     * - Deskripsi lengkap
+     * - Tanggung jawab dan kualifikasi
+     * - Deadline dan link untuk apply
+     * - Status favorit dan apply (jika user login)
+     * 
+     * @param int $id ID lowongan yang akan ditampilkan
+     * @return \Illuminate\View\View Halaman detail lowongan
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Jika ID tidak ditemukan
      */
     public function show($id)
     {
+        // Cari lowongan berdasarkan ID dengan relasi company
+        // findOrFail akan menampilkan 404 jika tidak ditemukan
         $job = Internjob::with('company')->findOrFail($id);
 
-        // Get user dengan eager loading
+        // Ambil data user jika login
         $user = Auth::guard('user_accounts')->user();
 
-        // Jika user login, ensure we have an Eloquent UserAccount instance with relationships
+        // Load relasi favorit dan lamaran untuk menampilkan status tombol
         if ($user && $user instanceof UserAccount && $user->getKey()) {
             $user = UserAccount::with(['favorites', 'appliedJobs'])->find($user->getKey());
         }
@@ -154,13 +170,31 @@ class InternjobController extends Controller
     }
 
     /**
-     * Toggle favorite job
+     * -------------------------------------------------------------------------
+     * Toggle Status Favorit Lowongan
+     * -------------------------------------------------------------------------
+     * Method ini menambah atau menghapus lowongan dari daftar favorit user.
+     * 
+     * Cara kerja (toggle):
+     * - Jika belum difavoritkan → tambahkan ke favorit
+     * - Jika sudah difavoritkan → hapus dari favorit
+     * 
+     * Method ini mendukung dua jenis response:
+     * - JSON response untuk AJAX/Livewire request
+     * - Redirect response untuk form biasa
+     * 
+     * @param int $id ID lowongan yang akan di-toggle
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function toggleFavorite($id)
     {
         /** @var UserAccount $user */
         $user = Auth::guard('user_accounts')->user();
 
+        // -----------------------------------------------------------------
+        // Cek Autentikasi
+        // -----------------------------------------------------------------
+        // Pengguna harus login untuk menggunakan fitur ini
         if (!$user) {
             if (request()->expectsJson()) {
                 return response()->json(['error' => 'Unauthenticated'], 401);
@@ -168,19 +202,29 @@ class InternjobController extends Controller
             return redirect()->route('login');
         }
 
+        // Pastikan lowongan ada di database
         $job = Internjob::findOrFail($id);
 
-        // Check if already favorited
+        // -----------------------------------------------------------------
+        // Toggle Status Favorit
+        // -----------------------------------------------------------------
+        // Cek apakah lowongan sudah ada di daftar favorit
         if ($user->favorites()->where('internjob_id', $id)->exists()) {
+            // Sudah ada → hapus dari favorit (detach)
             $user->favorites()->detach($id);
             $message = 'Job removed from favorites';
             $isFavorited = false;
         } else {
+            // Belum ada → tambahkan ke favorit (attach)
             $user->favorites()->attach($id);
             $message = 'Job added to favorites';
             $isFavorited = true;
         }
 
+        // -----------------------------------------------------------------
+        // Kirim Response
+        // -----------------------------------------------------------------
+        // JSON response untuk AJAX request
         if (request()->expectsJson()) {
             return response()->json([
                 'message' => $message,
@@ -188,17 +232,36 @@ class InternjobController extends Controller
             ]);
         }
 
+        // Redirect response untuk form biasa
         return back()->with('success', $message);
     }
 
     /**
-     * Toggle applied job
+     * -------------------------------------------------------------------------
+     * Toggle Status Lamaran
+     * -------------------------------------------------------------------------
+     * Method ini menandai atau menghapus status "sudah apply" pada lowongan.
+     * 
+     * Cara kerja (toggle):
+     * - Jika belum apply → tandai sebagai sudah apply
+     * - Jika sudah apply → hapus tanda apply
+     * 
+     * Catatan: Ini hanya untuk tracking internal, user tetap perlu
+     * apply melalui link external yang disediakan perusahaan.
+     * 
+     * Method ini mendukung dua jenis response:
+     * - JSON response untuk AJAX/Livewire request
+     * - Redirect response untuk form biasa
+     * 
+     * @param int $id ID lowongan yang akan di-toggle
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function toggleApplied($id)
     {
         /** @var UserAccount $user */
         $user = Auth::guard('user_accounts')->user();
 
+        // Cek autentikasi
         if (!$user) {
             if (request()->expectsJson()) {
                 return response()->json(['error' => 'Unauthenticated'], 401);
@@ -206,19 +269,26 @@ class InternjobController extends Controller
             return redirect()->route('login');
         }
 
+        // Pastikan lowongan ada di database
         $job = Internjob::findOrFail($id);
 
-        // Check if already applied
+        // -----------------------------------------------------------------
+        // Toggle Status Apply
+        // -----------------------------------------------------------------
         if ($user->appliedJobs()->where('internjob_id', $id)->exists()) {
+            // Sudah apply → hapus dari daftar (detach)
             $user->appliedJobs()->detach($id);
             $message = 'Job removed from applied list';
             $isApplied = false;
         } else {
+            // Belum apply → tambahkan ke daftar dengan timestamp
+            // Pivot applied_at mencatat waktu apply
             $user->appliedJobs()->attach($id, ['applied_at' => now()]);
             $message = 'Job marked as applied';
             $isApplied = true;
         }
 
+        // Kirim response sesuai tipe request
         if (request()->expectsJson()) {
             return response()->json([
                 'message' => $message,
@@ -230,11 +300,24 @@ class InternjobController extends Controller
     }
 
     /**
-     * Display company details
+     * -------------------------------------------------------------------------
+     * Halaman Detail Perusahaan
+     * -------------------------------------------------------------------------
+     * Method ini menampilkan informasi lengkap perusahaan:
+     * - Nama dan logo perusahaan
+     * - Alamat dan kontak (email, telepon, website)
+     * - Deskripsi perusahaan
+     * - Daftar lowongan yang tersedia dari perusahaan ini
+     * 
+     * @param int $id ID perusahaan yang akan ditampilkan
+     * @return \Illuminate\View\View Halaman detail perusahaan
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Jika ID tidak ditemukan
      */
     public function companyDetail($id)
     {
-        $company = companies::with('internjobs')->findOrFail($id);
+        // Cari perusahaan dengan relasi lowongan (eager loading)
+        // findOrFail akan menampilkan 404 jika perusahaan tidak ditemukan
+        $company = Company::with('internjobs')->findOrFail($id);
 
         return view('company-detail', compact('company'));
     }

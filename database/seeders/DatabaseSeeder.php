@@ -2,10 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+/**
+ * ============================================================================
+ * DATABASE SEEDER
+ * ============================================================================
+ * Main seeder yang menjalankan semua seeder lainnya.
+ * Jalankan dengan: php artisan db:seed
+ */
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -13,8 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            InternjobSeeder::class,
-        ]);
+        $this->command->info('=== Memulai Database Seeding ===');
+
+        // Seed Companies terlebih dahulu (dependency untuk Internjobs)
+        $this->call(CompaniesSeeder::class);
+
+        // Seed Internjobs (menggunakan companies yang sudah ada)
+        $this->call(InternjobSeeder::class);
+
+        $this->command->info('=== Database Seeding Selesai! ===');
     }
 }

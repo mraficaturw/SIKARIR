@@ -7,9 +7,10 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateInternjob extends CreateRecord
 {
-    public function getRedirectUrl(): string
-{
-    return static::getResource()::getUrl('index');
-}
     protected static string $resource = InternjobResource::class;
+
+    public function getRedirectUrl(): string
+    {
+        return static::getResource()::getUrl('index');
+    }
 }

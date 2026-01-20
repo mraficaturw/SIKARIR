@@ -60,65 +60,35 @@
                     </a>
                 </div>
             @else
-                <div class="row g-4">
-                    @foreach($favorites as $job)
-                        <div class="col-md-6" data-animate>
-                            <div class="job-card-modern h-100">
-                                <div class="job-header">
-                                    <img class="company-logo" src="{{ $job->logo_url }}" alt="{{ $job->company->company_name ?? 'Company' }}" loading="lazy" width="60" height="60">
-                                    <div style="flex: 1; min-width: 0;">
-                                        <h5 class="job-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $job->title }}</h5>
-                                        <a href="{{ route('company.detail', $job->company_id) }}" class="company-name text-decoration-none" title="Lihat detail perusahaan">
-                                            <i class="fa fa-building" aria-hidden="true"></i>
-                                            {{ $job->company->company_name ?? 'Unknown Company' }}
-                                        </a>
+                @if($favorites->count() > 2)
+                    {{-- Carousel Mode --}}
+                    <div class="jobs-carousel-container" data-animate>
+                        <button class="carousel-nav-btn carousel-prev" onclick="scrollCarousel('favorites', -1)" aria-label="Previous">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <div class="jobs-carousel-wrapper" id="favorites-wrapper">
+                            <div class="jobs-carousel" id="favorites-carousel">
+                                @foreach($favorites as $job)
+                                    <div class="carousel-item-job">
+                                        @include('profile.partials.job-card-profile', ['job' => $job, 'showAppliedDate' => false])
                                     </div>
-                                </div>
-                                <div class="job-meta">
-                                    <span class="job-meta-item">
-                                        <i class="fa fa-graduation-cap" aria-hidden="true"></i>
-                                        @if(mb_strlen($job->category) > 18)
-                                            {{ mb_substr($job->category, 0, 18) . '...' }}
-                                        @else
-                                            {{ $job->category }}
-                                        @endif
-                                    </span>
-                                    <span class="job-meta-item">
-                                        <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
-                                        {{ $job->location ?? 'Indonesia' }}
-                                    </span>
-                                    <span class="job-meta-item">
-                                        <i class="fa fa-money-bill-wave" aria-hidden="true"></i>
-                                        Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - {{ number_format((int)$job->salary_max, 0, ',', '.') }}
-                                    </span>
-                                    @if($job->deadline < now())
-                                        <span class="job-meta-item text-danger" style="font-weight: 600;">
-                                            <i class="far fa-calendar-times" aria-hidden="true"></i>
-                                            Tidak menerima pendaftaran lagi
-                                        </span>
-                                    @else
-                                        <span class="job-meta-item">
-                                            <i class="far fa-calendar-alt" aria-hidden="true"></i>
-                                            Deadline: {{ $job->deadline->format('d M Y') }}
-                                        </span>
-                                    @endif
-                                </div>
-                                <div class="job-footer">
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('job.detail', $job->id) }}" class="btn-primary-modern" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                                            View <i class="fa fa-arrow-right ms-1" aria-hidden="true"></i>
-                                        </a>
-                                        @if($job->apply_url)
-                                            <a href="{{ $job->apply_url }}" target="_blank" class="btn-success-modern" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                                                Apply <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
-                                            </a>
-                                        @endif
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                        <button class="carousel-nav-btn carousel-next" onclick="scrollCarousel('favorites', 1)" aria-label="Next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                @else
+                    {{-- Grid Mode --}}
+                    <div class="row g-4">
+                        @foreach($favorites as $job)
+                            <div class="col-md-6" data-animate>
+                                @include('profile.partials.job-card-profile', ['job' => $job, 'showAppliedDate' => false])
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             @endif
         </div>
 
@@ -143,89 +113,87 @@
                     </a>
                 </div>
             @else
-                <div class="row g-4">
-                    @foreach($appliedJobs as $job)
-                        <div class="col-md-6" data-animate>
-                            <div class="job-card-modern h-100">
-                                <div class="job-header">
-                                    <img class="company-logo" src="{{ $job->logo_url }}" alt="{{ $job->company->company_name ?? 'Company' }}" loading="lazy" width="60" height="60">
-                                    <div style="flex: 1; min-width: 0;">
-                                        <h5 class="job-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $job->title }}</h5>
-                                        <a href="{{ route('company.detail', $job->company_id) }}" class="company-name text-decoration-none" title="Lihat detail perusahaan">
-                                            <i class="fa fa-building" aria-hidden="true"></i>
-                                            {{ $job->company->company_name ?? 'Unknown Company' }}
-                                        </a>
+                @if($appliedJobs->count() > 2)
+                    {{-- Carousel Mode --}}
+                    <div class="jobs-carousel-container" data-animate>
+                        <button class="carousel-nav-btn carousel-prev" onclick="scrollCarousel('applied', -1)" aria-label="Previous">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <div class="jobs-carousel-wrapper" id="applied-wrapper">
+                            <div class="jobs-carousel" id="applied-carousel">
+                                @foreach($appliedJobs as $job)
+                                    <div class="carousel-item-job">
+                                        @include('profile.partials.job-card-profile', ['job' => $job, 'showAppliedDate' => true])
                                     </div>
-                                </div>
-                                <div class="job-meta">
-                                    <span class="job-meta-item">
-                                        <i class="fa fa-graduation-cap" aria-hidden="true"></i>
-                                        @if(mb_strlen($job->category) > 18)
-                                            {{ mb_substr($job->category, 0, 18) . '...' }}
-                                        @else
-                                            {{ $job->category }}
-                                        @endif
-                                    </span>
-                                    <span class="job-meta-item">
-                                        <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
-                                        {{ $job->location ?? 'Indonesia' }}
-                                    </span>
-                                    <span class="job-meta-item">
-                                        <i class="fa fa-money-bill-wave" aria-hidden="true"></i>
-                                        Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - {{ number_format((int)$job->salary_max, 0, ',', '.') }}
-                                    </span>
-                                    <span class="job-meta-item">
-                                        <i class="fa fa-calendar-check" aria-hidden="true"></i>
-                                        Applied: {{ \Carbon\Carbon::parse($job->pivot->applied_at)->format('d M, Y') }}
-                                    </span>
-                                    @if($job->deadline < now())
-                                        <span class="job-meta-item text-danger" style="font-weight: 600;">
-                                            <i class="far fa-calendar-times" aria-hidden="true"></i>
-                                            Tidak menerima pendaftaran lagi
-                                        </span>
-                                    @else
-                                        <span class="job-meta-item">
-                                            <i class="far fa-calendar-alt" aria-hidden="true"></i>
-                                            Deadline: {{ $job->deadline->format('d M Y') }}
-                                        </span>
-                                    @endif
-                                </div>
-                                <div class="job-footer">
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('job.detail', $job->id) }}" class="btn-primary-modern" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                                            View <i class="fa fa-arrow-right ms-1" aria-hidden="true"></i>
-                                        </a>
-                                        @if($job->apply_url)
-                                            <a href="{{ $job->apply_url }}" target="_blank" class="btn-success-modern" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                                                See Progress <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
-                                            </a>
-                                        @endif
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                        <button class="carousel-nav-btn carousel-next" onclick="scrollCarousel('applied', 1)" aria-label="Next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                @else
+                    {{-- Grid Mode --}}
+                    <div class="row g-4">
+                        @foreach($appliedJobs as $job)
+                            <div class="col-md-6" data-animate>
+                                @include('profile.partials.job-card-profile', ['job' => $job, 'showAppliedDate' => true])
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             @endif
         </div>
 
-        <!-- Account Settings -->
-        <div class="card-modern" data-animate>
-            <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="icon-wrapper" style="width: 48px; height: 48px; background: rgba(0, 176, 116, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa fa-cog text-primary" aria-hidden="true"></i>
+        <!-- Account Settings - Premium Redesign -->
+        <div class="account-settings-section" data-animate>
+            <div class="settings-header-premium">
+                <div class="settings-header-icon">
+                    <i class="fa fa-sliders-h"></i>
                 </div>
-                <h3 class="h5 fw-bold mb-0">Account Settings</h3>
+                <div class="settings-header-text">
+                    <h3>Account Settings</h3>
+                    <p>Kelola akun dan keamanan Anda</p>
+                </div>
             </div>
             
-            <div class="d-flex flex-wrap gap-3">
-                <a href="{{ route('profile.change-password') }}" class="btn btn-warning">
-                    <i class="fa fa-key me-2" aria-hidden="true"></i>Change Password
+            <div class="settings-cards-premium">
+                <!-- Change Password Card -->
+                <a href="{{ route('profile.change-password') }}" class="settings-card-premium settings-card-warning">
+                    <div class="settings-card-glow"></div>
+                    <div class="settings-card-content">
+                        <div class="settings-card-icon">
+                            <i class="fa fa-shield-alt"></i>
+                        </div>
+                        <div class="settings-card-body">
+                            <h4>Ubah Password</h4>
+                            <p>Perbarui kata sandi untuk keamanan akun</p>
+                        </div>
+                        <div class="settings-card-action">
+                            <span class="settings-card-badge">Security</span>
+                            <i class="fa fa-arrow-right"></i>
+                        </div>
+                    </div>
                 </a>
-                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                
+                <!-- Logout Card -->
+                <form method="POST" action="{{ route('logout') }}" class="settings-form-premium">
                     @csrf
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fa fa-sign-out-alt me-2" aria-hidden="true"></i>Logout
+                    <button type="submit" class="settings-card-premium settings-card-danger">
+                        <div class="settings-card-glow"></div>
+                        <div class="settings-card-content">
+                            <div class="settings-card-icon">
+                                <i class="fa fa-power-off"></i>
+                            </div>
+                            <div class="settings-card-body">
+                                <h4>Keluar</h4>
+                                <p>Logout dari akun Anda saat ini</p>
+                            </div>
+                            <div class="settings-card-action">
+                                <span class="settings-card-badge">Exit</span>
+                                <i class="fa fa-arrow-right"></i>
+                            </div>
+                        </div>
                     </button>
                 </form>
             </div>
@@ -233,3 +201,67 @@
     </div>
 </section>
 @endsection
+
+@push('js')
+<script>
+    function scrollCarousel(type, direction) {
+        const carousel = document.getElementById(type + '-carousel');
+        if (!carousel) return;
+        
+        const itemWidth = carousel.querySelector('.carousel-item-job')?.offsetWidth || 350;
+        const gap = 24; // 1.5rem gap
+        const scrollAmount = (itemWidth + gap) * direction;
+        
+        carousel.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+
+    // Update fade edges based on scroll position
+    function updateCarouselFades(carousel, wrapper) {
+        if (!carousel || !wrapper) return;
+        
+        const scrollLeft = carousel.scrollLeft;
+        const scrollWidth = carousel.scrollWidth;
+        const clientWidth = carousel.clientWidth;
+        
+        // Show left fade when scrolled
+        if (scrollLeft > 10) {
+            wrapper.classList.add('scrolled-left');
+        } else {
+            wrapper.classList.remove('scrolled-left');
+        }
+        
+        // Hide right fade when scrolled to end
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+            wrapper.classList.add('scrolled-end');
+        } else {
+            wrapper.classList.remove('scrolled-end');
+        }
+    }
+
+    // Initialize carousel scroll listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousels = [
+            { carousel: 'favorites-carousel', wrapper: 'favorites-wrapper' },
+            { carousel: 'applied-carousel', wrapper: 'applied-wrapper' }
+        ];
+        
+        carousels.forEach(function(item) {
+            const carousel = document.getElementById(item.carousel);
+            const wrapper = document.getElementById(item.wrapper);
+            
+            if (carousel && wrapper) {
+                // Initial state
+                updateCarouselFades(carousel, wrapper);
+                
+                // Listen for scroll
+                carousel.addEventListener('scroll', function() {
+                    updateCarouselFades(carousel, wrapper);
+                });
+            }
+        });
+    });
+</script>
+@endpush

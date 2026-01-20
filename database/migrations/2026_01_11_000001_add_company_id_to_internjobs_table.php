@@ -12,6 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Check if company_id column already exists (fresh migration scenario)
+        if (Schema::hasColumn('internjobs', 'company_id')) {
+            // Column already exists (from initial migration), skip adding it
+            // Also skip data migration since there's no old data to migrate
+
+            // Just clean up old columns if they exist
+            if (Schema::hasColumn('internjobs', 'company')) {
+                Schema::table('internjobs', function (Blueprint $table) {
+                    $table->dropColumn(['company', 'logo']);
+                });
+            }
+            return;
+        }
+
         // Step 1: Add company_id column (nullable for now)
         Schema::table('internjobs', function (Blueprint $table) {
             $table->foreignId('company_id')->nullable()->after('id')->constrained('companies')->nullOnDelete();
@@ -56,10 +70,12 @@ return new class extends Migration
                 ->update(['company_id' => $companyId]);
         }
 
-        // Step 3: Drop old columns
-        Schema::table('internjobs', function (Blueprint $table) {
-            $table->dropColumn(['company', 'logo']);
-        });
+        // Step 3: Drop old columns if they exist
+        if (Schema::hasColumn('internjobs', 'company')) {
+            Schema::table('internjobs', function (Blueprint $table) {
+                $table->dropColumn(['company', 'logo']);
+            });
+        }
     }
 
     /**

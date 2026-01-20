@@ -6,6 +6,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use App\Services\ImageService;
 
 class CompaniesForm
 {
@@ -50,7 +51,7 @@ class CompaniesForm
                     ->visibility('public')
                     ->hint('Ukuran gambar yang disarankan: 200x200 piksel untuk hasil terbaik.')
                     ->saveUploadedFileUsing(function ($file, $state, $set, $get) {
-                        return \App\Services\ImageService::convertAndUpload(
+                        return ImageService::convertAndUpload(
                             $file,
                             'supabase',
                             'logos',

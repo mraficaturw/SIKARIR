@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\Internjobs\Schemas;
 
-use App\Models\companies;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\FileUpload;
+use App\Services\ImageService;
 
 class InternjobForm
 {
@@ -41,7 +41,7 @@ class InternjobForm
                             ->maxSize(2048)
                             ->visibility('public')
                             ->saveUploadedFileUsing(function ($file, $state, $set, $get) {
-                                return \App\Services\ImageService::convertAndUpload(
+                                return ImageService::convertAndUpload(
                                     $file,
                                     'supabase',
                                     'logos',
@@ -103,6 +103,7 @@ class InternjobForm
                     ->placeholder('Pilih Fakultas'),
                 TextInput::make('apply_url')
                     ->label('Link Untuk Apply')
+                    ->required()
                     ->url()
                     ->placeholder('https://example.com/apply'),
             ]);

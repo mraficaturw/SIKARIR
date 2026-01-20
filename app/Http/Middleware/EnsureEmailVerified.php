@@ -17,7 +17,7 @@ class EnsureEmailVerified
         }
 
         if (is_null($user->email_verified_at)) {
-            Auth::guard('user_accounts')->logout();
+            // Auth::guard('user_accounts')->logout(); // Removed to fix UX loop
             return redirect()->route('verification.notice')
                 ->with('message', 'Silakan verifikasi email kamu sebelum mengakses halaman ini.');
         }

@@ -13,7 +13,18 @@ class EditInternjob extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->successNotificationTitle('Deleted!'),
         ];
+    }
+
+    public function getRedirectUrl(): string
+    {
+        return static::getResource()::getUrl('index');
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Updated!';
     }
 }

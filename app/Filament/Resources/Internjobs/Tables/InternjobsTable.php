@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\Internjobs\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 
 class InternjobsTable
 {
@@ -20,18 +21,8 @@ class InternjobsTable
                 TextColumn::make('company.company_name')
                     ->label('Company')
                     ->searchable(),
-                ImageColumn::make('logo_url')
-                    ->label('Logo')
-                    ->square()
-                    ->width(60),
                 TextColumn::make('location')
                     ->searchable(),
-                TextColumn::make('salary_min')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('salary_max')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('deadline')
                     ->date()
                     ->sortable(),
@@ -51,11 +42,11 @@ class InternjobsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->defaultSort('deadline', direction: 'asc')
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make()
+                    ->successNotificationTitle('Deleted'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
