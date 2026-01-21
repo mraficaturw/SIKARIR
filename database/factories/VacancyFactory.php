@@ -3,33 +3,30 @@
 namespace Database\Factories;
 
 use App\Models\Company;
-use App\Models\Internjob;
-use Faker\Factory as Faker;
+use App\Models\Vacancy;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * ============================================================================
- * FACTORY: INTERNJOB
+ * FACTORY: VACANCY
  * ============================================================================
  * Factory untuk generate data dummy lowongan magang/kerja.
  * Company bisa menggunakan data existing atau buat baru.
  * 
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Internjob>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Vacancy>
  */
-class InternjobFactory extends Factory
+class VacancyFactory extends Factory
 {
     /**
      * Model yang di-generate oleh factory ini.
      */
-    protected $model = Internjob::class;
+    protected $model = Vacancy::class;
 
     /**
      * Define the model's default state.
      */
     public function definition(): array
     {
-        $faker = Faker::create(config('app.faker_locale', 'en_US'));
-
         // Daftar judul posisi lowongan
         $jobTitles = [
             'Software Engineer Intern',
@@ -93,8 +90,8 @@ class InternjobFactory extends Factory
         ];
 
         // Generate salary range
-        $salaryMin = $faker->randomElement([0, 1000000, 1500000, 2000000, 2500000, 3000000]);
-        $salaryMax = $salaryMin > 0 ? $salaryMin + $faker->numberBetween(500000, 3000000) : 0;
+        $salaryMin = fake()->randomElement([0, 1000000, 1500000, 2000000, 2500000, 3000000]);
+        $salaryMax = $salaryMin > 0 ? $salaryMin + fake()->numberBetween(500000, 3000000) : 0;
 
         // Coba gunakan company yang sudah ada, jika tidak ada buat baru
         $company = Company::inRandomOrder()->first();
@@ -103,18 +100,18 @@ class InternjobFactory extends Factory
         }
 
         return [
-            'title' => $faker->randomElement($jobTitles),
+            'title' => fake()->randomElement($jobTitles),
             'company_id' => $company->id,
-            'location' => $faker->randomElement($locations),
-            'type' => $faker->randomElement($types),
+            'location' => fake()->randomElement($locations),
+            'type' => fake()->randomElement($types),
             'salary_min' => $salaryMin,
             'salary_max' => $salaryMax,
-            'description' => $this->generateDescription($faker),
-            'responsibility' => $this->generateResponsibility($faker),
-            'qualifications' => $this->generateQualifications($faker),
-            'deadline' => $faker->dateTimeBetween('+1 week', '+3 months'),
-            'category' => $faker->randomElement($categories),
-            'apply_url' => $faker->optional(0.7)->url(),
+            'description' => $this->generateDescription(),
+            'responsibility' => $this->generateResponsibility(),
+            'qualifications' => $this->generateQualifications(),
+            'deadline' => fake()->dateTimeBetween('+1 week', '+3 months'),
+            'category' => fake()->randomElement($categories),
+            'apply_url' => fake()->optional(0.7)->url(),
         ];
     }
 
@@ -144,17 +141,48 @@ class InternjobFactory extends Factory
      */
     public function expired(): static
     {
-        $faker = Faker::create(config('app.faker_locale', 'en_US'));
-
         return $this->state(fn(array $attributes) => [
-            'deadline' => $faker->dateTimeBetween('-1 month', '-1 day'),
+            'deadline' => fake()->dateTimeBetween('-1 month', '-1 day'),
+        ]);
+    }
+
+    /**
+     * State untuk lowongan unpaid (gaji kosong).
+     */
+    public function unpaid(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'salary_min' => null,
+            'salary_max' => null,
+        ]);
+    }
+
+    /**
+     * State untuk lowongan hanya dengan gaji minimum (Start from).
+     */
+    public function minOnly(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'salary_min' => 2000000,
+            'salary_max' => null,
+        ]);
+    }
+
+    /**
+     * State untuk lowongan hanya dengan gaji maksimum (Up to).
+     */
+    public function maxOnly(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'salary_min' => null,
+            'salary_max' => 5000000,
         ]);
     }
 
     /**
      * Generate deskripsi lowongan yang realistis.
      */
-    private function generateDescription($faker): string
+    private function generateDescription(): string
     {
         $descriptions = [
             "Kami mencari kandidat yang bersemangat untuk bergabung dengan tim kami. " .
@@ -170,13 +198,13 @@ class InternjobFactory extends Factory
                 "Kami menyediakan fasilitas lengkap dan suasana kerja yang menyenangkan.",
         ];
 
-        return $faker->randomElement($descriptions);
+        return fake()->randomElement($descriptions);
     }
 
     /**
      * Generate tanggung jawab posisi.
      */
-    private function generateResponsibility($faker): string
+    private function generateResponsibility(): string
     {
         $responsibilities = [
             "- Membantu tim dalam pengembangan dan pemeliharaan proyek\n" .
@@ -192,13 +220,13 @@ class InternjobFactory extends Factory
                 "- Mendukung aktivitas operasional harian tim",
         ];
 
-        return $faker->randomElement($responsibilities);
+        return fake()->randomElement($responsibilities);
     }
 
     /**
      * Generate kualifikasi yang dibutuhkan.
      */
-    private function generateQualifications($faker): string
+    private function generateQualifications(): string
     {
         $qualifications = [
             "- Mahasiswa aktif atau fresh graduate dari jurusan terkait\n" .
@@ -216,6 +244,6 @@ class InternjobFactory extends Factory
                 "- Detail-oriented dan mampu bekerja under pressure",
         ];
 
-        return $faker->randomElement($qualifications);
+        return fake()->randomElement($qualifications);
     }
 }

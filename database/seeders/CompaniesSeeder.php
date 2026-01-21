@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\companies;
+use App\Models\Company;
 use Illuminate\Database\Seeder;
 
 /**
@@ -20,7 +20,7 @@ class CompaniesSeeder extends Seeder
     public function run(): void
     {
         // Buat 10 perusahaan dummy
-        companies::factory(10)->create();
+        Company::factory(10)->create();
 
         $this->command->info('✓ 10 companies berhasil di-seed!');
     }

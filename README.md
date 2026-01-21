@@ -1,7 +1,7 @@
 # SIKARIR - Sistem Informas Karir / Unsika Karir
 
 <p align="center">
-  <img src="public/images/logo.png" width="200" alt="SIKARIR Logo">
+  <img src="https://drive.google.com/file/d/1kdpxas7OP30mmjY4rZO_kxALMpo98hzw/view?usp=sharing" width="200" alt="SIKARIR Logo">
 </p>
 
 <p align="center">

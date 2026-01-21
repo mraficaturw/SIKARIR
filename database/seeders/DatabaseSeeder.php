@@ -20,11 +20,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->command->info('=== Memulai Database Seeding ===');
 
-        // Seed Companies terlebih dahulu (dependency untuk Internjobs)
+        // Seed Companies terlebih dahulu (dependency untuk Vacancies)
         $this->call(CompaniesSeeder::class);
 
-        // Seed Internjobs (menggunakan companies yang sudah ada)
-        $this->call(InternjobSeeder::class);
+        // Seed Vacancies (menggunakan companies yang sudah ada)
+        $this->call(VacancySeeder::class);
 
         $this->command->info('=== Database Seeding Selesai! ===');
     }

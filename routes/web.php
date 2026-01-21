@@ -11,7 +11,7 @@
  * 2. Authentication Routes - Login, Register, Forgot Password
  * 3. Email Verification Routes - Verifikasi email
  * 4. Protected Routes - Membutuhkan login dan email verified
- * 5. Internjob Routes - Halaman lowongan (public)
+ * 5. Vacancy Routes - Halaman lowongan (public)
  * 6. Feature Routes - Favorit dan Apply (butuh login)
  * 
  * Guards yang digunakan:
@@ -23,7 +23,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Http\Controllers\InternjobController;
+use App\Http\Controllers\VacancyController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ProfileController;
@@ -41,7 +41,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 */
 
 // Halaman utama (welcome) - Menampilkan 6 lowongan terbaru
-Route::get('/', [InternjobController::class, 'index'])->name('welcome');
+Route::get('/', [VacancyController::class, 'index'])->name('welcome');
 
 /*
 |--------------------------------------------------------------------------
@@ -160,20 +160,20 @@ Route::get('/password/verify/{token}', [ProfileController::class, 'verifyPasswor
 
 /*
 |--------------------------------------------------------------------------
-| Internjob Routes (Public view)
+| Vacancy Routes (Public view)
 |--------------------------------------------------------------------------
 | Route publik untuk melihat lowongan dan perusahaan.
 | Tidak membutuhkan login untuk akses.
 */
 
 // Halaman daftar semua lowongan dengan pagination dan search
-Route::get('/jobs', [InternjobController::class, 'jobs'])->name('jobs');
+Route::get('/jobs', [VacancyController::class, 'jobs'])->name('jobs');
 
 // Halaman detail lowongan - {id} adalah ID lowongan
-Route::get('/job/{id}', [InternjobController::class, 'show'])->name('job.detail');
+Route::get('/job/{id}', [VacancyController::class, 'show'])->name('job.detail');
 
 // Halaman detail perusahaan - menampilkan info perusahaan dan lowongan terkait
-Route::get('/company/{id}', [InternjobController::class, 'companyDetail'])->name('company.detail');
+Route::get('/company/{id}', [VacancyController::class, 'companyDetail'])->name('company.detail');
 
 /*
 |--------------------------------------------------------------------------
@@ -187,10 +187,10 @@ Route::get('/company/{id}', [InternjobController::class, 'companyDetail'])->name
 */
 Route::middleware('auth:user_accounts')->group(function () {
     // Toggle favorit - tambah/hapus lowongan dari daftar favorit
-    Route::post('/jobs/{id}/favorite-toggle', [InternjobController::class, 'toggleFavorite'])->name('job.favorite.toggle');
+    Route::post('/jobs/{id}/favorite-toggle', [VacancyController::class, 'toggleFavorite'])->name('job.favorite.toggle');
 
     // Toggle applied - tandai/batalkan status sudah apply
-    Route::post('/jobs/{id}/applied-toggle', [InternjobController::class, 'toggleApplied'])->name('job.applied.toggle');
+    Route::post('/jobs/{id}/applied-toggle', [VacancyController::class, 'toggleApplied'])->name('job.applied.toggle');
 });
 
 // Debug routes removed for security - do not expose internal state in production

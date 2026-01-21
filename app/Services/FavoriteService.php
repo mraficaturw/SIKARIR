@@ -10,7 +10,7 @@ use App\Models\UserAccount;
  * ============================================================================
  * Service untuk mengelola fitur favorit lowongan.
  * Sentralisasi logic yang sebelumnya duplikat di:
- * - InternjobController::toggleFavorite()
+ * - VacancyController::toggleFavorite()
  * - FavoriteButton Livewire component
  * 
  * Keuntungan:
@@ -48,6 +48,6 @@ class FavoriteService
      */
     public function isFavorited(UserAccount $user, int $jobId): bool
     {
-        return $user->favorites()->where('internjob_id', $jobId)->exists();
+        return $user->favorites()->where('vacancy_id', $jobId)->exists();
     }
 }

@@ -36,9 +36,9 @@ class CompaniesTable
                     ->url(fn($record) => $record->official_website)
                     ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('internjobs_count')
+                TextColumn::make('vacancies_count')
                     ->label('Jumlah Lowongan')
-                    ->counts('internjobs')
+                    ->counts('vacancies')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Dibuat')

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Internjob;
+use App\Models\Vacancy;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
@@ -15,7 +15,7 @@ class VacancyGrowthChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Internjob::selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+        $data = Vacancy::selectRaw('YEAR(created_at) as year, COUNT(*) as count')
             ->groupBy('year')
             ->orderBy('year')
             ->pluck('count', 'year')

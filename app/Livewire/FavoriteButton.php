@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Internjob;
+use App\Models\Vacancy;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -58,7 +58,7 @@ class FavoriteButton extends Component
         // Jika tidak, tombol akan dalam state "belum difavoritkan"
         if ($user && $user->hasVerifiedEmail()) {
             // Query ke pivot table untuk cek apakah sudah ada
-            $this->isFavorite = $user->favorites()->where('internjob_id', $this->jobId)->exists();
+            $this->isFavorite = $user->favorites()->where('vacancy_id', $this->jobId)->exists();
         }
     }
 
@@ -100,12 +100,12 @@ class FavoriteButton extends Component
         }
 
         // Pastikan lowongan ada di database
-        $job = Internjob::findOrFail($this->jobId);
+        $job = Vacancy::findOrFail($this->jobId);
 
         // -----------------------------------------------------------------
         // Toggle Status Favorit
         // -----------------------------------------------------------------
-        if ($user->favorites()->where('internjob_id', $this->jobId)->exists()) {
+        if ($user->favorites()->where('vacancy_id', $this->jobId)->exists()) {
             // Sudah difavoritkan → hapus dari daftar favorit
             $user->favorites()->detach($this->jobId);
             $this->isFavorite = false;

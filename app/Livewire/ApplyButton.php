@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Internjob;
+use App\Models\Vacancy;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -63,7 +63,7 @@ class ApplyButton extends Component
         // Cek status apply jika user login dan email sudah verified
         if ($user && $user->hasVerifiedEmail()) {
             // Query ke pivot table untuk cek apakah sudah ada record
-            $this->isApplied = $user->appliedJobs()->where('internjob_id', $this->jobId)->exists();
+            $this->isApplied = $user->appliedJobs()->where('vacancy_id', $this->jobId)->exists();
         }
     }
 
@@ -106,7 +106,7 @@ class ApplyButton extends Component
         // -----------------------------------------------------------------
         // Toggle Status Apply
         // -----------------------------------------------------------------
-        if ($user->appliedJobs()->where('internjob_id', $this->jobId)->exists()) {
+        if ($user->appliedJobs()->where('vacancy_id', $this->jobId)->exists()) {
             // Sudah ditandai apply → hapus tanda (detach)
             $user->appliedJobs()->detach($this->jobId);
             $this->isApplied = false;

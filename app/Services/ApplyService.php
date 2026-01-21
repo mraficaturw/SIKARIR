@@ -10,7 +10,7 @@ use App\Models\UserAccount;
  * ============================================================================
  * Service untuk mengelola fitur apply/melamar lowongan.
  * Sentralisasi logic yang sebelumnya duplikat di:
- * - InternjobController::toggleApplied()
+ * - VacancyController::toggleApplied()
  * - ApplyButton Livewire component
  * 
  * Keuntungan:
@@ -48,6 +48,6 @@ class ApplyService
      */
     public function isApplied(UserAccount $user, int $jobId): bool
     {
-        return $user->appliedJobs()->where('internjob_id', $jobId)->exists();
+        return $user->appliedJobs()->where('vacancy_id', $jobId)->exists();
     }
 }

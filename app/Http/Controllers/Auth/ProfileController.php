@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\PasswordChangeToken;
 use App\Models\UserAccount;
-use App\Models\Internjob;
 use App\Notifications\VerifyPasswordChange;
 use App\Services\ImageService;
 use Illuminate\Http\Request;

@@ -52,11 +52,197 @@
                 </div>
             </div>
             
-            <div wire:loading.delay wire:target="performSearch, search, category" class="text-center py-4">
-                <div class="spinner-border text-success" role="status">
-                    <span class="visually-hidden">Loading...</span>
+            {{-- Loading Overlay - Centered on search results area --}}
+            <div wire:loading.delay wire:target="performSearch, search, category" 
+                 class="search-loading-overlay">
+                <div class="search-loading-container">
+                    <div class="search-loading-spinner">
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-ring"></div>
+                    </div>
+                    <p class="search-loading-text">Mencari lowongan...</p>
                 </div>
             </div>
+            
+            <style>
+                /* Search Loading Overlay - Responsive untuk semua device */
+                .search-loading-overlay {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 300px;
+                    width: 100%;
+                    padding: 2rem;
+                }
+                
+                .search-loading-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 2rem 3rem;
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    border-radius: 1rem;
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                    animation: pulse-container 2s ease-in-out infinite;
+                }
+                
+                @keyframes pulse-container {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.02); }
+                }
+                
+                /* Triple ring spinner */
+                .search-loading-spinner {
+                    position: relative;
+                    width: 60px;
+                    height: 60px;
+                    margin-bottom: 1rem;
+                }
+                
+                .spinner-ring {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 50%;
+                    border: 3px solid transparent;
+                    animation: spin-ring 1.2s linear infinite;
+                }
+                
+                .spinner-ring:nth-child(1) {
+                    border-top-color: #198754;
+                    animation-delay: 0s;
+                }
+                
+                .spinner-ring:nth-child(2) {
+                    width: 80%;
+                    height: 80%;
+                    top: 10%;
+                    left: 10%;
+                    border-right-color: #20c997;
+                    animation-delay: -0.4s;
+                    animation-direction: reverse;
+                }
+                
+                .spinner-ring:nth-child(3) {
+                    width: 60%;
+                    height: 60%;
+                    top: 20%;
+                    left: 20%;
+                    border-bottom-color: #0d9668;
+                    animation-delay: -0.8s;
+                }
+                
+                @keyframes spin-ring {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                
+                .search-loading-text {
+                    margin: 0;
+                    font-size: 0.95rem;
+                    font-weight: 500;
+                    color: #198754;
+                    letter-spacing: 0.025em;
+                }
+                
+                /* Tablet (768px - 1024px) */
+                @media (max-width: 1024px) {
+                    .search-loading-overlay {
+                        min-height: 250px;
+                        padding: 1.5rem;
+                    }
+                    
+                    .search-loading-container {
+                        padding: 1.75rem 2.5rem;
+                    }
+                    
+                    .search-loading-spinner {
+                        width: 55px;
+                        height: 55px;
+                    }
+                    
+                    .search-loading-text {
+                        font-size: 0.9rem;
+                    }
+                }
+                
+                /* Mobile (< 768px) */
+                @media (max-width: 767px) {
+                    .search-loading-overlay {
+                        min-height: 200px;
+                        padding: 1rem 0;
+                        margin: 0 auto;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 100%;
+                        box-sizing: border-box;
+                    }
+                    
+                    .search-loading-container {
+                        padding: 1.5rem 2rem;
+                        border-radius: 0.75rem;
+                        margin: 0 auto;
+                        text-align: center;
+                    }
+                    
+                    .search-loading-spinner {
+                        width: 50px;
+                        height: 50px;
+                        margin: 0 auto 0.75rem auto;
+                    }
+                    
+                    .spinner-ring {
+                        border-width: 2.5px;
+                    }
+                    
+                    .search-loading-text {
+                        font-size: 0.85rem;
+                        text-align: center;
+                    }
+                }
+                
+                /* Small mobile (< 480px) */
+                @media (max-width: 480px) {
+                    .search-loading-overlay {
+                        min-height: 180px;
+                        padding: 1rem 0;
+                    }
+                    
+                    .search-loading-container {
+                        padding: 1.25rem 1.5rem;
+                        width: auto;
+                        min-width: 200px;
+                        max-width: 80%;
+                        margin: 0 auto;
+                    }
+                    
+                    .search-loading-spinner {
+                        width: 45px;
+                        height: 45px;
+                        margin: 0 auto 0.75rem auto;
+                    }
+                    
+                    .search-loading-text {
+                        font-size: 0.8rem;
+                    }
+                }
+                
+                /* Dark mode support */
+                @media (prefers-color-scheme: dark) {
+                    .search-loading-container {
+                        background: rgba(30, 30, 30, 0.95);
+                    }
+                    
+                    .search-loading-text {
+                        color: #4ade80;
+                    }
+                }
+            </style>
             
             <div wire:loading.remove wire:target="performSearch, search, category">
                 @if($jobs->count() > 0)
@@ -92,7 +278,7 @@
                                         </span>
                                         <span class="job-meta-item">
                                             <i class="fa fa-money-bill-wave" aria-hidden="true"></i>
-                                            Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - {{ number_format((int)$job->salary_max, 0, ',', '.') }}
+                                            {{ $job->formatted_salary }}
                                         </span>
                                     </div>
                                     

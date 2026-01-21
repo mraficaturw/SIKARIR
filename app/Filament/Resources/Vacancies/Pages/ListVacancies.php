@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\Internjobs\Pages;
+namespace App\Filament\Resources\Vacancies\Pages;
 
-use App\Filament\Resources\Internjobs\InternjobResource;
+use App\Filament\Resources\Vacancies\VacancyResource;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Notifications\Notification;
 
-class ListInternjobs extends ListRecords
+class ListVacancies extends ListRecords
 {
-    protected static string $resource = InternjobResource::class;
+    protected static string $resource = VacancyResource::class;
 
     protected function getHeaderActions(): array
     {

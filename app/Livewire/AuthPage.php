@@ -98,9 +98,19 @@ class AuthPage extends Component
     }
 
     /**
+     * Maksimal percobaan password salah sebelum akun dikunci (reset verifikasi email)
+     */
+    protected int $maxPasswordAttempts = 5;
+
+    /**
      * -------------------------------------------------------------------------
      * Action: Login
      * -------------------------------------------------------------------------
+     * Alur login yang diperbarui:
+     * 1. Cek apakah email terdaftar di database
+     * 2. Jika email tidak ditemukan, tampilkan "email belum terdaftar"
+     * 3. Jika email ditemukan tapi password salah, tampilkan sisa percobaan
+     * 4. Setelah 5x password salah, reset verifikasi email dan harus verifikasi ulang
      */
     public function login(): void
     {
@@ -109,45 +119,87 @@ class AuthPage extends Component
             'password' => ['required', 'string'],
         ]);
 
-        // Rate limiting
-        $throttleKey = strtolower($this->email) . '|' . request()->ip();
+        // -----------------------------------------------------------------
+        // LANGKAH 1: Cek apakah email terdaftar
+        // -----------------------------------------------------------------
+        $user = UserAccount::where('email', strtolower($this->email))->first();
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $seconds = RateLimiter::availableIn($throttleKey);
+        if (!$user) {
             throw ValidationException::withMessages([
-                'email' => "Terlalu banyak percobaan. Coba lagi dalam {$seconds} detik.",
+                'email' => 'Email belum terdaftar.',
             ]);
         }
 
-        // Attempt login
-        $credentials = [
-            'email' => $this->email,
-            'password' => $this->password,
-        ];
+        // -----------------------------------------------------------------
+        // LANGKAH 2: Rate limiting per-user (berbasis email saja)
+        // -----------------------------------------------------------------
+        // Key berbasis email untuk tracking percobaan password per akun
+        $passwordThrottleKey = 'password_attempts:' . strtolower($this->email);
 
-        if (Auth::guard('user_accounts')->attempt($credentials, $this->remember)) {
-            RateLimiter::clear($throttleKey);
+        // Cek apakah akun sudah terkunci karena terlalu banyak percobaan
+        if (RateLimiter::tooManyAttempts($passwordThrottleKey, $this->maxPasswordAttempts)) {
+            $seconds = RateLimiter::availableIn($passwordThrottleKey);
+            throw ValidationException::withMessages([
+                'password' => "Akun terkunci sementara. Coba lagi dalam {$seconds} detik.",
+            ]);
+        }
 
-            /** @var UserAccount $user */
-            $user = Auth::guard('user_accounts')->user();
+        // -----------------------------------------------------------------
+        // LANGKAH 3: Cek password
+        // -----------------------------------------------------------------
+        if (!Hash::check($this->password, $user->password)) {
+            // Catat percobaan gagal
+            RateLimiter::hit($passwordThrottleKey, 300); // Decay 5 menit
 
-            // Check email verification
-            if (!$user->hasVerifiedEmail()) {
-                session()->flash('status', 'Silakan verifikasi email Anda terlebih dahulu.');
-                $this->redirect(route('verification.notice'));
-                return;
+            // Hitung sisa percobaan
+            $currentAttempts = RateLimiter::attempts($passwordThrottleKey);
+            $remainingAttempts = $this->maxPasswordAttempts - $currentAttempts;
+
+            // -----------------------------------------------------------------
+            // LANGKAH 4: Cek apakah sudah 5x gagal
+            // -----------------------------------------------------------------
+            if ($remainingAttempts <= 0) {
+                // Reset verifikasi email - user harus verifikasi ulang
+                $user->email_verified_at = null;
+                $user->save();
+
+                // Kirim ulang email verifikasi
+                $user->sendEmailVerificationNotification();
+
+                // Clear rate limiter setelah reset
+                RateLimiter::clear($passwordThrottleKey);
+
+                throw ValidationException::withMessages([
+                    'password' => 'Anda telah gagal login 5 kali. Untuk keamanan akun, verifikasi email diperlukan. Silakan cek email Anda untuk link verifikasi baru.',
+                ]);
             }
 
-            session()->regenerate();
-            $this->redirect(route('profile.show'));
+            // Tampilkan pesan dengan sisa percobaan
+            $attemptWord = $remainingAttempts === 1 ? 'percobaan' : 'percobaan';
+            throw ValidationException::withMessages([
+                'password' => "Password salah. Sisa {$remainingAttempts} {$attemptWord} lagi sebelum akun terkunci.",
+            ]);
+        }
+
+        // -----------------------------------------------------------------
+        // LANGKAH 5: Password benar - Clear rate limiter
+        // -----------------------------------------------------------------
+        RateLimiter::clear($passwordThrottleKey);
+
+        // Login user
+        Auth::guard('user_accounts')->login($user, $this->remember);
+
+        // -----------------------------------------------------------------
+        // LANGKAH 6: Cek verifikasi email
+        // -----------------------------------------------------------------
+        if (!$user->hasVerifiedEmail()) {
+            session()->flash('status', 'Silakan verifikasi email Anda terlebih dahulu.');
+            $this->redirect(route('verification.notice'));
             return;
         }
 
-        RateLimiter::hit($throttleKey);
-
-        throw ValidationException::withMessages([
-            'email' => 'Email atau password salah.',
-        ]);
+        session()->regenerate();
+        $this->redirect(route('profile.show'));
     }
 
     /**

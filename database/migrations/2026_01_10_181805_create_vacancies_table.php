@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('internjobs', function (Blueprint $table) {
+        Schema::create('vacancies', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
-            $table->string('company');
+
+            $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->string('location');
             $table->string('type')->default('Internship');
             $table->decimal('salary_min', 10, 2)->nullable();
@@ -24,8 +24,8 @@ return new class extends Migration
             $table->text('responsibility')->nullable();
             $table->text('qualifications')->nullable();
             $table->date('deadline')->nullable();
-            $table->string('logo')->nullable();
             $table->string('category')->nullable();
+            $table->string('apply_url')->nullable();
             $table->timestamps();
         });
     }
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('internjobs');
+        Schema::dropIfExists('vacancies');
     }
 };

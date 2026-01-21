@@ -1,6 +1,105 @@
 <div class="auth-split-container {{ $mode === 'register' ? 'register-mode' : 'login-mode' }}" 
      wire:key="auth-container-{{ $mode }}">
     
+    {{-- Inline Responsive CSS to ensure mobile/tablet responsiveness --}}
+    <style>
+        /* Force responsive layout for tablet and mobile */
+        @media (max-width: 992px) {
+            .auth-split-container {
+                display: flex !important;
+                flex-direction: column !important;
+                grid-template-columns: unset !important;
+            }
+            
+            .auth-split-container .auth-welcome-panel {
+                order: 1 !important;
+                width: 100% !important;
+                border-radius: 0 0 24px 24px !important;
+                min-height: 200px !important;
+            }
+            
+            .auth-split-container .auth-form-panel {
+                order: 2 !important;
+                width: 100% !important;
+                flex: 1 !important;
+            }
+            
+            .auth-split-container.register-mode .auth-welcome-panel {
+                order: 1 !important;
+            }
+            
+            .auth-split-container.register-mode .auth-form-panel {
+                order: 2 !important;
+            }
+        }
+        
+        /* Tablet specific (577px - 992px) */
+        @media (min-width: 577px) and (max-width: 992px) {
+            .auth-split-container .auth-welcome-panel {
+                padding: 2rem 1.5rem !important;
+                min-height: 220px !important;
+            }
+            
+            .auth-split-container .welcome-features {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                gap: 0.75rem !important;
+            }
+            
+            .auth-split-container .welcome-text p {
+                display: block !important;
+            }
+        }
+        
+        /* Mobile specific (< 576px) */
+        @media (max-width: 576px) {
+            .auth-split-container .auth-welcome-panel {
+                padding: 1.25rem 1rem !important;
+                min-height: 160px !important;
+                border-radius: 0 0 16px 16px !important;
+            }
+            
+            .auth-split-container .welcome-text p {
+                display: none !important;
+            }
+            
+            .auth-split-container .welcome-features {
+                display: none !important;
+            }
+            
+            .auth-split-container .welcome-text h2 {
+                font-size: 1.375rem !important;
+            }
+            
+            .auth-split-container .auth-split-logo img {
+                height: 36px !important;
+            }
+            
+            .auth-split-container .auth-split-logo h1 {
+                font-size: 1.25rem !important;
+            }
+            
+            .auth-split-container .auth-form-wrapper {
+                padding: 1rem 0.75rem !important;
+            }
+            
+            .auth-split-container .auth-title {
+                font-size: 1.375rem !important;
+            }
+            
+            .auth-split-container .auth-subtitle {
+                font-size: 0.875rem !important;
+            }
+            
+            .auth-split-container .floating-blob,
+            .auth-split-container .floating-shape {
+                display: none !important;
+            }
+        }
+    </style>
+    
     <!-- Welcome Panel -->
     <div class="auth-welcome-panel">
         <div class="welcome-content">

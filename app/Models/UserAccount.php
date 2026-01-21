@@ -132,7 +132,7 @@ class UserAccount extends Authenticatable implements MustVerifyEmail
      * withTimestamps(): Otomatis isi created_at dan updated_at di pivot
      * 
      * Contoh penggunaan:
-     * $user->favorites                  // Collection Internjob
+     * $user->favorites                  // Collection Vacancy
      * $user->favorites()->attach(1)     // Tambah favorit
      * $user->favorites()->detach(1)     // Hapus favorit
      * 
@@ -141,10 +141,10 @@ class UserAccount extends Authenticatable implements MustVerifyEmail
     public function favorites()
     {
         return $this->belongsToMany(
-            Internjob::class,             // Model terkait
+            Vacancy::class,               // Model terkait
             'user_account_favorites',     // Nama pivot table
             'user_account_id',            // Foreign key untuk model ini
-            'internjob_id'                // Foreign key untuk model terkait
+            'vacancy_id'                  // Foreign key untuk model terkait
         )->withTimestamps();              // Include timestamps di pivot
     }
 
@@ -160,7 +160,7 @@ class UserAccount extends Authenticatable implements MustVerifyEmail
      * - created_at, updated_at: timestamps otomatis
      * 
      * Contoh penggunaan:
-     * $user->appliedJobs                              // Collection Internjob
+     * $user->appliedJobs                              // Collection Vacancy
      * $user->appliedJobs()->attach(1, ['applied_at' => now()]) // Tambah
      * $user->appliedJobs->first()->pivot->applied_at  // Akses waktu apply
      * 
@@ -169,10 +169,10 @@ class UserAccount extends Authenticatable implements MustVerifyEmail
     public function appliedJobs()
     {
         return $this->belongsToMany(
-            Internjob::class,             // Model terkait
+            Vacancy::class,               // Model terkait
             'user_account_applied',       // Nama pivot table
             'user_account_id',            // Foreign key untuk model ini
-            'internjob_id'                // Foreign key untuk model terkait
+            'vacancy_id'                  // Foreign key untuk model terkait
         )->withPivot('applied_at')        // Include kolom applied_at
             ->withTimestamps();              // Include timestamps di pivot
     }

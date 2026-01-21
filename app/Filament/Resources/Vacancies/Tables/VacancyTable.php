@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Internjobs\Tables;
+namespace App\Filament\Resources\Vacancies\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -10,7 +10,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
 
-class InternjobsTable
+class VacancyTable
 {
     public static function configure(Table $table): Table
     {

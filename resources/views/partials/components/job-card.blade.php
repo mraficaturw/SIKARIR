@@ -30,7 +30,7 @@
         </span>
         <span class="job-meta-item">
             <i class="fa fa-money-bill-wave" aria-hidden="true"></i>
-            Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - {{ number_format((int)$job->salary_max, 0, ',', '.') }}
+            {{ $job->formatted_salary }}
         </span>
     </div>
     <div class="job-footer">

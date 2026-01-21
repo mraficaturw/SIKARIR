@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
-use App\Models\Internjob;
+use App\Models\Vacancy;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
  * ============================================================================
- * INTERNJOB CONTROLLER
+ * VACANCY CONTROLLER
  * ============================================================================
  * Controller utama untuk menampilkan dan mengelola lowongan kerja/magang.
  * 
@@ -19,13 +19,13 @@ use Illuminate\Support\Facades\Auth;
  * - Menampilkan daftar semua lowongan dengan pagination
  * - Menampilkan detail lowongan
  * - Menampilkan detail perusahaan
- * - Toggle favorit dan status lamarann
+ * - Toggle favorit dan status lamaran
  * 
  * Controller ini banyak digunakan oleh route publik (tanpa login)
  * kecuali untuk fitur favorit dan lamaran yang butuh autentikasi.
  * ============================================================================
  */
-class InternjobController extends Controller
+class VacancyController extends Controller
 {
     /**
      * -------------------------------------------------------------------------
@@ -75,7 +75,7 @@ class InternjobController extends Controller
         // -----------------------------------------------------------------
         // Query Lowongan dengan Filter (menggunakan scopeSearch)
         // -----------------------------------------------------------------
-        $jobs = Internjob::with('company')
+        $jobs = Vacancy::with('company')
             ->search($search, $category)
             ->orderBy('created_at', 'desc')
             ->limit(config('sikarir.pagination.welcome_jobs_limit', 6))
@@ -87,7 +87,7 @@ class InternjobController extends Controller
         // Digunakan untuk menampilkan badge jumlah di setiap kategori
         $category_counts = [];
         foreach ($faculties as $key => $name) {
-            $category_counts[$key] = Internjob::where('category', $key)->count();
+            $category_counts[$key] = Vacancy::where('category', $key)->count();
         }
 
         return view('welcome', compact('jobs', 'user', 'faculties', 'icons', 'category_counts'));
@@ -114,7 +114,7 @@ class InternjobController extends Controller
         // -----------------------------------------------------------------
         // Query Lowongan dengan Filter (menggunakan scopeSearch)
         // -----------------------------------------------------------------
-        $jobs = Internjob::with('company')
+        $jobs = Vacancy::with('company')
             ->search($search, $category)
             ->orderBy('created_at', 'desc')
             ->paginate(config('sikarir.pagination.jobs_per_page', 10));
@@ -156,7 +156,7 @@ class InternjobController extends Controller
     {
         // Cari lowongan berdasarkan ID dengan relasi company
         // findOrFail akan menampilkan 404 jika tidak ditemukan
-        $job = Internjob::with('company')->findOrFail($id);
+        $job = Vacancy::with('company')->findOrFail($id);
 
         // Ambil data user jika login
         $user = Auth::guard('user_accounts')->user();
@@ -203,13 +203,13 @@ class InternjobController extends Controller
         }
 
         // Pastikan lowongan ada di database
-        $job = Internjob::findOrFail($id);
+        $job = Vacancy::findOrFail($id);
 
         // -----------------------------------------------------------------
         // Toggle Status Favorit
         // -----------------------------------------------------------------
         // Cek apakah lowongan sudah ada di daftar favorit
-        if ($user->favorites()->where('internjob_id', $id)->exists()) {
+        if ($user->favorites()->where('vacancy_id', $id)->exists()) {
             // Sudah ada → hapus dari favorit (detach)
             $user->favorites()->detach($id);
             $message = 'Job removed from favorites';
@@ -270,12 +270,12 @@ class InternjobController extends Controller
         }
 
         // Pastikan lowongan ada di database
-        $job = Internjob::findOrFail($id);
+        $job = Vacancy::findOrFail($id);
 
         // -----------------------------------------------------------------
         // Toggle Status Apply
         // -----------------------------------------------------------------
-        if ($user->appliedJobs()->where('internjob_id', $id)->exists()) {
+        if ($user->appliedJobs()->where('vacancy_id', $id)->exists()) {
             // Sudah apply → hapus dari daftar (detach)
             $user->appliedJobs()->detach($id);
             $message = 'Job removed from applied list';
@@ -317,7 +317,7 @@ class InternjobController extends Controller
     {
         // Cari perusahaan dengan relasi lowongan (eager loading)
         // findOrFail akan menampilkan 404 jika perusahaan tidak ditemukan
-        $company = Company::with('internjobs')->findOrFail($id);
+        $company = Company::with('vacancies')->findOrFail($id);
 
         return view('company-detail', compact('company'));
     }

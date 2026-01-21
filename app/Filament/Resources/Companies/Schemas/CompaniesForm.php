@@ -47,7 +47,7 @@ class CompaniesForm
                     ->imagePreviewHeight('150')
                     ->imageResizeMode('cover')
                     ->acceptedFileTypes(['image/*'])
-                    ->maxSize(2048)
+                    ->maxSize(5120)
                     ->visibility('public')
                     ->hint('Ukuran gambar yang disarankan: 200x200 piksel untuk hasil terbaik.')
                     ->saveUploadedFileUsing(function ($file, $state, $set, $get) {

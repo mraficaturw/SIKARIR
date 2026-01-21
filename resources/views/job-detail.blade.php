@@ -42,7 +42,7 @@
                                         {{ $job->category }}
                                     @endif
                                 </span>
-                                <span><i class="fa fa-money-bill-wave text-primary me-2" aria-hidden="true"></i>Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - {{ number_format((int)$job->salary_max, 0, ',', '.') }}</span>
+                                <span><i class="fa fa-money-bill-wave text-primary me-2" aria-hidden="true"></i>{{ $job->formatted_salary }}</span>
                             </div>
                         </div>
                     </div>
@@ -126,8 +126,8 @@
                                 <i class="fa fa-money-bill-wave text-primary"></i>
                             </div>
                             <div>
-                                <div class="small text-muted">Gaji Maksimal</div>
-                                <div class="fw-medium">Rp {{ number_format((int)$job->salary_max, 0, ',', '.') }}</div>
+                                <div class="small text-muted">Gaji</div>
+                                <div class="fw-medium">{{ $job->formatted_salary }}</div>
                             </div>
                         </div>
                         

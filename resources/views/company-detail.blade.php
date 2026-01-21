@@ -60,11 +60,11 @@
                 
                 <!-- Job Listings -->
                 <div class="card-modern" data-animate>
-                    <h3 class="h5 fw-bold mb-4"><i class="fa fa-briefcase text-primary me-2" aria-hidden="true"></i>Lowongan Tersedia ({{ $company->internjobs->count() }})</h3>
+                    <h3 class="h5 fw-bold mb-4"><i class="fa fa-briefcase text-primary me-2" aria-hidden="true"></i>Lowongan Tersedia ({{ $company->vacancies->count() }})</h3>
                     
-                    @if($company->internjobs->count() > 0)
+                    @if($company->vacancies->count() > 0)
                         <div class="d-flex flex-column gap-3">
-                            @foreach($company->internjobs as $job)
+                            @foreach($company->vacancies as $job)
                             <a href="{{ route('job.detail', $job->id) }}" class="text-decoration-none">
                                 <div class="p-3 border rounded-3 hover-shadow" style="transition: all 0.3s ease;">
                                     <div class="d-flex justify-content-between align-items-start">
@@ -72,7 +72,7 @@
                                             <h5 class="mb-1 text-dark">{{ $job->title }}</h5>
                                             <div class="d-flex flex-wrap gap-2 text-muted small">
                                                 <span><i class="fa fa-map-marker-alt me-1" aria-hidden="true"></i>{{ $job->location }}</span>
-                                                <span><i class="fa fa-money-bill-wave me-1" aria-hidden="true"></i>Rp {{ number_format((int)$job->salary_min, 0, ',', '.') }} - {{ number_format((int)$job->salary_max, 0, ',', '.') }}</span>
+                                                <span><i class="fa fa-money-bill-wave me-1" aria-hidden="true"></i>{{ $job->formatted_salary }}</span>
                                             </div>
                                         </div>
                                         <span class="badge bg-success-subtle text-success">{{ $job->category }}</span>

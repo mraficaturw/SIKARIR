@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Company;
-use Faker\Factory as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -27,8 +26,6 @@ class CompanyFactory extends Factory
      */
     public function definition(): array
     {
-        $faker = Faker::create(config('app.faker_locale', 'en_US'));
-
         // Daftar nama perusahaan Indonesia dummy
         $companyNames = [
             'PT Teknologi Nusantara',
@@ -49,13 +46,13 @@ class CompanyFactory extends Factory
         ];
 
         return [
-            'company_name' => $faker->randomElement($companyNames) . ' ' . $faker->numberBetween(1, 100),
+            'company_name' => fake()->randomElement($companyNames) . ' ' . fake()->numberBetween(1, 100),
             'logo' => null, // Default: null (akan pakai default logo dari accessor)
-            'official_website' => $faker->optional(0.7)->url(),
-            'email' => $faker->unique()->companyEmail(),
-            'phone' => $faker->optional(0.8)->phoneNumber(),
-            'address' => $faker->optional(0.7)->address(),
-            'company_description' => $faker->optional(0.6)->sentence(10),
+            'official_website' => fake()->optional(0.7)->url(),
+            'email' => fake()->unique()->companyEmail(),
+            'phone' => fake()->optional(0.8)->phoneNumber(),
+            'address' => fake()->optional(0.7)->address(),
+            'company_description' => fake()->optional(0.6)->sentence(10),
         ];
     }
 
@@ -64,13 +61,11 @@ class CompanyFactory extends Factory
      */
     public function complete(): static
     {
-        $faker = Faker::create(config('app.faker_locale', 'en_US'));
-
         return $this->state(fn(array $attributes) => [
-            'official_website' => $faker->url(),
-            'phone' => $faker->phoneNumber(),
-            'address' => $faker->address(),
-            'company_description' => $faker->sentence(15),
+            'official_website' => fake()->url(),
+            'phone' => fake()->phoneNumber(),
+            'address' => fake()->address(),
+            'company_description' => fake()->sentence(15),
         ]);
     }
 }

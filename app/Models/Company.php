@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * Digunakan untuk menampilkan informasi perusahaan pada lowongan.
  * 
  * Relasi:
- * - hasMany: Internjob (satu perusahaan bisa punya banyak lowongan)
+ * - hasMany: Vacancy (satu perusahaan bisa punya banyak lowongan)
  * 
  * Storage:
  * - Logo disimpan di Supabase Storage (disk: supabase)
@@ -78,18 +78,18 @@ class Company extends Model
      * -------------------------------------------------------------------------
      * Relasi: Lowongan dari Perusahaan
      * -------------------------------------------------------------------------
-     * Relasi One-to-Many ke model Internjob.
+     * Relasi One-to-Many ke model Vacancy.
      * Satu perusahaan bisa memiliki banyak lowongan.
      * 
      * Contoh penggunaan:
-     * $company->internjobs              // Collection semua lowongan
-     * $company->internjobs()->count()   // Jumlah lowongan aktif
-     * $company->internjobs()->latest()  // Lowongan terbaru
+     * $company->vacancies              // Collection semua lowongan
+     * $company->vacancies()->count()   // Jumlah lowongan aktif
+     * $company->vacancies()->latest()  // Lowongan terbaru
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function internjobs()
+    public function vacancies()
     {
-        return $this->hasMany(Internjob::class, 'company_id');
+        return $this->hasMany(Vacancy::class, 'company_id');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Internjobs\Schemas;
+namespace App\Filament\Resources\Vacancies\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -10,7 +10,7 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\FileUpload;
 use App\Services\ImageService;
 
-class InternjobForm
+class VacancyForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -38,7 +38,7 @@ class InternjobForm
                             ->directory('logos')
                             ->image()
                             ->imagePreviewHeight('100')
-                            ->maxSize(2048)
+                            ->maxSize(5120)
                             ->visibility('public')
                             ->saveUploadedFileUsing(function ($file, $state, $set, $get) {
                                 return ImageService::convertAndUpload(
@@ -65,13 +65,27 @@ class InternjobForm
                     ->placeholder('Contoh: 2000000')
                     ->numeric()
                     ->live()
-                    ->lte('salary_max')
+                    ->rule(function ($get) {
+                        return function (string $attribute, $value, \Closure $fail) use ($get) {
+                            $max = $get('salary_max');
+                            if ($value !== null && $max !== null && $value > $max) {
+                                $fail("Salary min tidak boleh lebih besar dari salary max.");
+                            }
+                        };
+                    })
                     ->default(null),
                 TextInput::make('salary_max')
                     ->placeholder('Contoh: 3000000')
                     ->numeric()
                     ->live()
-                    ->gte('salary_min')
+                    ->rule(function ($get) {
+                        return function (string $attribute, $value, \Closure $fail) use ($get) {
+                            $min = $get('salary_min');
+                            if ($value !== null && $min !== null && $value < $min) {
+                                $fail("Salary max tidak boleh lebih kecil dari salary min.");
+                            }
+                        };
+                    })
                     ->default(null),
                 Textarea::make('description')
                     ->placeholder('Deskripsikan posisi magang secara detail...')

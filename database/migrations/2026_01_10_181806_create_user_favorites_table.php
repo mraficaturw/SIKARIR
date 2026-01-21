@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('user_account_applied')) {
-            Schema::create('user_account_applied', function (Blueprint $table) {
+        if (!Schema::hasTable('user_account_favorites')) {
+            Schema::create('user_account_favorites', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_account_id')->constrained('user_accounts')->onDelete('cascade');
-                $table->foreignId('internjob_id')->constrained('internjobs')->onDelete('cascade');
-                $table->timestamp('applied_at')->nullable();
+                $table->foreignId('vacancy_id')->constrained('vacancies')->onDelete('cascade');
                 $table->timestamps();
 
-                $table->unique(['user_account_id', 'internjob_id']);
+                $table->unique(['user_account_id', 'vacancy_id']);
             });
         }
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_account_applied');
+        Schema::dropIfExists('user_account_favorites');
     }
 };

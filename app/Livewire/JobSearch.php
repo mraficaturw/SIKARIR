@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Internjob;
+use App\Models\Vacancy;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -150,7 +150,7 @@ class JobSearch extends Component
         // -----------------------------------------------------------------
         // Query Lowongan dengan Filter (menggunakan scopeSearch)
         // -----------------------------------------------------------------
-        $jobs = Internjob::with('company')
+        $jobs = Vacancy::with('company')
             ->search($this->search, $this->category)
             ->orderBy('created_at', 'desc')
             ->paginate(config('sikarir.pagination.jobs_per_page', 10));

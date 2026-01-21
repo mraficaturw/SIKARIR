@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * ============================================================================
- * MODEL INTERNJOB
+ * MODEL VACANCY
  * ============================================================================
  * Model ini merepresentasikan data lowongan kerja/magang dalam database.
  * Digunakan untuk menampilkan daftar lowongan dan detail lowongan.
@@ -17,12 +17,17 @@ use Illuminate\Database\Eloquent\Model;
  * - belongsToMany: UserAccount (lowongan bisa difavoritkan banyak user)
  * - belongsToMany: UserAccount (lowongan bisa dilamar banyak user)
  * 
- * Tabel: internjobs
+ * Tabel: vacancies
  * ============================================================================
  */
-class Internjob extends Model
+class Vacancy extends Model
 {
     use HasFactory;
+
+    /**
+     * Nama tabel yang digunakan model ini.
+     */
+    protected $table = 'vacancies';
 
     /**
      * -------------------------------------------------------------------------
@@ -64,7 +69,7 @@ class Internjob extends Model
      * Query Scope: Search & Filter
      * -------------------------------------------------------------------------
      * Scope untuk pencarian dan filter lowongan.
-     * Menggabungkan logic yang sebelumnya duplikat di InternjobController
+     * Menggabungkan logic yang sebelumnya duplikat di VacancyController
      * dan JobSearch Livewire component.
      * 
      * Pencarian dilakukan pada:
@@ -73,8 +78,8 @@ class Internjob extends Model
      * - Deskripsi lowongan (description)
      * 
      * Contoh penggunaan:
-     * Internjob::search($keyword, $category)->get();
-     * Internjob::search($keyword)->paginate(10);
+     * Vacancy::search($keyword, $category)->get();
+     * Vacancy::search($keyword)->paginate(10);
      * 
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string|null $search Kata kunci pencarian
@@ -107,11 +112,11 @@ class Internjob extends Model
      * Relasi: Perusahaan Pemilik Lowongan
      * -------------------------------------------------------------------------
      * Setiap lowongan dimiliki oleh satu perusahaan.
-     * Relasi BelongsTo ke model companies melalui company_id.
+     * Relasi BelongsTo ke model Company melalui company_id.
      * 
      * Contoh penggunaan:
-     * $job->company->company_name  // "PT ABC Indonesia"
-     * $job->company->logo_url      // URL logo perusahaan
+     * $vacancy->company->company_name  // "PT ABC Indonesia"
+     * $vacancy->company->logo_url      // URL logo perusahaan
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -127,8 +132,8 @@ class Internjob extends Model
      * Mengambil URL logo dari perusahaan yang terkait.
      * Jika perusahaan tidak punya logo, gunakan gambar default.
      * 
-     * Accessor ini memungkinkan akses: $job->logo_url
-     * (tanpa harus $job->company->logo_url)
+     * Accessor ini memungkinkan akses: $vacancy->logo_url
+     * (tanpa harus $vacancy->company->logo_url)
      * 
      * @return string URL logo perusahaan
      */
@@ -144,14 +149,54 @@ class Internjob extends Model
 
     /**
      * -------------------------------------------------------------------------
+     * Accessor: Formatted Salary
+     * -------------------------------------------------------------------------
+     * Menampilkan salary dengan format yang tepat berdasarkan kondisi:
+     * - Jika keduanya null → "Unpaid"
+     * - Jika hanya salary_min terisi → "Rp X.XXX.XXX"
+     * - Jika hanya salary_max terisi → "Rp X.XXX.XXX"
+     * - Jika keduanya terisi → "Rp X.XXX.XXX - X.XXX.XXX"
+     * 
+     * Contoh penggunaan:
+     * $vacancy->formatted_salary // "Rp 1.500.000 - 3.000.000" atau "Unpaid"
+     * 
+     * @return string Salary yang sudah diformat
+     */
+    public function getFormattedSalaryAttribute(): string
+    {
+        $min = $this->salary_min;
+        $max = $this->salary_max;
+
+        // Jika keduanya kosong/null/0, tampilkan "Unpaid"
+        // empty() catches null, 0, "0", "" etc.
+        if (empty($min) && empty($max)) {
+            return 'Unpaid';
+        }
+
+        // Jika hanya salary_min yang terisi (dan > 0)
+        if (!empty($min) && empty($max)) {
+            return 'Rp ' . number_format((int)$min, 0, ',', '.');
+        }
+
+        // Jika hanya salary_max yang terisi (dan > 0)
+        if (empty($min) && !empty($max)) {
+            return 'Rp ' . number_format((int)$max, 0, ',', '.');
+        }
+
+        // Jika keduanya terisi, tampilkan range
+        return 'Rp ' . number_format((int)$min, 0, ',', '.') . ' - ' . number_format((int)$max, 0, ',', '.');
+    }
+
+    /**
+     * -------------------------------------------------------------------------
      * Relasi: Users yang Memfavoritkan
      * -------------------------------------------------------------------------
      * Relasi Many-to-Many melalui pivot table 'user_account_favorites'.
      * Satu lowongan bisa difavoritkan oleh banyak user.
      * 
      * Contoh penggunaan:
-     * $job->favoredBy           // Collection UserAccount yang memfavoritkan
-     * $job->favoredBy()->count() // Jumlah user yang memfavoritkan
+     * $vacancy->favoredBy           // Collection UserAccount yang memfavoritkan
+     * $vacancy->favoredBy()->count() // Jumlah user yang memfavoritkan
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -160,7 +205,7 @@ class Internjob extends Model
         return $this->belongsToMany(
             UserAccount::class,           // Model terkait
             'user_account_favorites',     // Nama pivot table
-            'internjob_id',               // Foreign key di pivot untuk model ini
+            'vacancy_id',                 // Foreign key di pivot untuk model ini
             'user_account_id'             // Foreign key di pivot untuk model terkait
         );
     }
@@ -176,8 +221,8 @@ class Internjob extends Model
      * - applied_at: timestamp kapan user melamar
      * 
      * Contoh penggunaan:
-     * $job->appliedBy                     // Collection UserAccount yang melamar
-     * $job->appliedBy->first()->pivot->applied_at // Waktu apply
+     * $vacancy->appliedBy                     // Collection UserAccount yang melamar
+     * $vacancy->appliedBy->first()->pivot->applied_at // Waktu apply
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -186,7 +231,7 @@ class Internjob extends Model
         return $this->belongsToMany(
             UserAccount::class,           // Model terkait
             'user_account_applied',       // Nama pivot table
-            'internjob_id',               // Foreign key di pivot untuk model ini
+            'vacancy_id',                 // Foreign key di pivot untuk model ini
             'user_account_id'             // Foreign key di pivot untuk model terkait
         )->withPivot('applied_at');       // Include kolom tambahan dari pivot
     }
