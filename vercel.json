@@ -58,10 +58,37 @@
         }
     ],
     "env": {
+        "APP_NAME": "SIKARIR",
         "APP_ENV": "production",
         "APP_DEBUG": "false",
+        "APP_KEY": "base64:eaSAKSVv54bS4pnAZX1vvhTrKm8wr/nsNV8tgGZ3CEc=",
+        "APP_URL": "https://sikarir-umber.vercel.app",
         "FORCE_HTTPS": "true",
         "TRUSTED_PROXIES": "*",
+
+        "DB_CONNECTION": "mysql",
+        "DB_HOST": "ninlh1.h.filess.io",
+        "DB_PORT": "3307",
+        "DB_DATABASE": "sikarir_unknownnor",
+        "DB_USERNAME": "sikarir_unknownnor",
+        "DB_PASSWORD": "18aebab90012c913da8ce7e92a97c67043b34f0e",
+
+        "MAIL_MAILER": "smtp",
+        "MAIL_HOST": "smtp.gmail.com",
+        "MAIL_PORT": "587",
+        "MAIL_USERNAME": "2210631170086@student.unsika.ac.id",
+        "MAIL_PASSWORD": "xybnuozbyagexhhn",
+        "MAIL_ENCRYPTION": "tls",
+        "MAIL_FROM_ADDRESS": "2210531170086@student.unsika.ac.id",
+        "MAIL_FROM_NAME": "SIKARIR - UNSIKA",
+
+        "SUPABASE_STORAGE_KEY": "88f10e5876bd8a045cd7e1b58e3bd9cd",
+        "SUPABASE_STORAGE_SECRET": "6e2a05d44626eb5403b39223378bb42480a0d89151bb0524075d93c1b240299a",
+        "SUPABASE_STORAGE_REGION": "ap-south-1",
+        "SUPABASE_STORAGE_ENDPOINT": "https://ovwqycqsrtxsieycracz.storage.supabase.co/storage/v1/s3",
+        "SUPABASE_STORAGE_BUCKET": "company-logos",
+        "SUPABASE_STORAGE_URL": "https://ovwqycqsrtxsieycracz.supabase.co/storage/v1/object/public/company-logos",
+        "SUPABASE_AVATAR_URL": "https://ovwqycqsrtxsieycracz.supabase.co/storage/v1/object/public/avatar",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
