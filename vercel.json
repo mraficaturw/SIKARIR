@@ -3,8 +3,7 @@
     "framework": null,
     "functions": {
         "api/index.php": {
-            "runtime": "vercel-php@0.6.2",
-            "maxDuration": 30
+            "runtime": "vercel-php@0.5.3"
         }
     },
     "routes": [
@@ -106,6 +105,5 @@
         "SESSION_DRIVER": "cookie",
         "QUEUE_CONNECTION": "sync",
         "FILESYSTEM_DISK": "public"
-    },
-    "outputDirectory": "public"
+    }
 }
