@@ -109,6 +109,85 @@ class Vacancy extends Model
 
     /**
      * -------------------------------------------------------------------------
+     * Cached Query: Latest Vacancies
+     * -------------------------------------------------------------------------
+     * Mengambil lowongan terbaru dengan cache.
+     * Cache akan expired sesuai TTL yang dikonfigurasi.
+     * 
+     * Contoh penggunaan:
+     * Vacancy::getCachedLatest($limit);
+     * 
+     * @param int $limit Jumlah lowongan yang diambil
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getCachedLatest(int $limit = 6)
+    {
+        $cacheKey = config('sikarir.cache.keys.vacancy_latest') . ':' . $limit;
+        $cacheTTL = config('sikarir.cache.ttl.vacancies', 3600);
+
+        return cache()->remember($cacheKey, $cacheTTL, function () use ($limit) {
+            return static::with('company')
+                ->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get();
+        });
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * Cached Query: Category Counts
+     * -------------------------------------------------------------------------
+     * Menghitung jumlah lowongan per kategori dengan cache.
+     * Cache akan expired sesuai TTL categories karena jarang berubah.
+     * 
+     * Contoh penggunaan:
+     * Vacancy::getCachedCategoryCounts();
+     * 
+     * @return array Array dengan format ['Fakultas X' => count]
+     */
+    public static function getCachedCategoryCounts(): array
+    {
+        $cacheKey = config('sikarir.cache.keys.vacancy_category_counts');
+        $cacheTTL = config('sikarir.cache.ttl.categories', 86400);
+
+        return cache()->remember($cacheKey, $cacheTTL, function () {
+            $faculties = config('sikarir.faculties', []);
+            $counts = [];
+
+            foreach ($faculties as $key => $data) {
+                $counts[$key] = static::where('category', $key)->count();
+            }
+
+            return $counts;
+        });
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * Clear All Vacancy Caches
+     * -------------------------------------------------------------------------
+     * Menghapus semua cache yang terkait dengan vacancy.
+     * Dipanggil otomatis oleh Observer saat data berubah.
+     * 
+     * @return void
+     */
+    public static function clearCache(): void
+    {
+        // Clear cache untuk latest vacancies dengan berbagai limit
+        foreach ([6, 10, 12, 20] as $limit) {
+            $key = config('sikarir.cache.keys.vacancy_latest') . ':' . $limit;
+            cache()->forget($key);
+        }
+
+        // Clear category counts
+        cache()->forget(config('sikarir.cache.keys.vacancy_category_counts'));
+
+        // Clear search results cache (pattern-based clear tidak tersedia di database driver)
+        // Untuk production dengan Redis, bisa gunakan cache()->tags()
+    }
+
+    /**
+     * -------------------------------------------------------------------------
      * Relasi: Perusahaan Pemilik Lowongan
      * -------------------------------------------------------------------------
      * Setiap lowongan dimiliki oleh satu perusahaan.

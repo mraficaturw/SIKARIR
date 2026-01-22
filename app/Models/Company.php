@@ -76,6 +76,45 @@ class Company extends Model
 
     /**
      * -------------------------------------------------------------------------
+     * Cached Query: Company Detail
+     * -------------------------------------------------------------------------
+     * Mengambil data company dengan relasi vacancies, dengan cache.
+     * Cache akan expired sesuai TTL yang dikonfigurasi.
+     * 
+     * Contoh penggunaan:
+     * Company::getCachedCompany($id);
+     * 
+     * @param int $id ID company yang akan diambil
+     * @return \App\Models\Company|null
+     */
+    public static function getCachedCompany(int $id): ?Company
+    {
+        $cacheKey = config('sikarir.cache.keys.company_detail') . ':' . $id;
+        $cacheTTL = config('sikarir.cache.ttl.companies', 3600);
+
+        return cache()->remember($cacheKey, $cacheTTL, function () use ($id) {
+            return static::with('vacancies')->find($id);
+        });
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * Clear Company Cache
+     * -------------------------------------------------------------------------
+     * Menghapus cache untuk company tertentu.
+     * Dipanggil otomatis oleh Observer saat data berubah.
+     * 
+     * @param int $id ID company yang cache-nya akan dihapus
+     * @return void
+     */
+    public static function clearCache(int $id): void
+    {
+        $cacheKey = config('sikarir.cache.keys.company_detail') . ':' . $id;
+        cache()->forget($cacheKey);
+    }
+
+    /**
+     * -------------------------------------------------------------------------
      * Relasi: Lowongan dari Perusahaan
      * -------------------------------------------------------------------------
      * Relasi One-to-Many ke model Vacancy.

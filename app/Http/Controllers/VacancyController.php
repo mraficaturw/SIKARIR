@@ -75,20 +75,24 @@ class VacancyController extends Controller
         // -----------------------------------------------------------------
         // Query Lowongan dengan Filter (menggunakan scopeSearch)
         // -----------------------------------------------------------------
-        $jobs = Vacancy::with('company')
-            ->search($search, $category)
-            ->orderBy('created_at', 'desc')
-            ->limit(config('sikarir.pagination.welcome_jobs_limit', 6))
-            ->get();
+        // Jika tidak ada search/filter, gunakan cached data untuk performa optimal
+        // Jika ada search/filter, query langsung (karena dynamic)
+        if (empty($search) && empty($category)) {
+            $jobs = Vacancy::getCachedLatest(config('sikarir.pagination.welcome_jobs_limit', 6));
+        } else {
+            $jobs = Vacancy::with('company')
+                ->search($search, $category)
+                ->orderBy('created_at', 'desc')
+                ->limit(config('sikarir.pagination.welcome_jobs_limit', 6))
+                ->get();
+        }
 
         // -----------------------------------------------------------------
-        // Hitung Jumlah Lowongan per Kategori
+        // Hitung Jumlah Lowongan per Kategori (Cached)
         // -----------------------------------------------------------------
         // Digunakan untuk menampilkan badge jumlah di setiap kategori
-        $category_counts = [];
-        foreach ($faculties as $key => $name) {
-            $category_counts[$key] = Vacancy::where('category', $key)->count();
-        }
+        // Menggunakan cache karena data ini jarang berubah
+        $category_counts = Vacancy::getCachedCategoryCounts();
 
         return view('welcome', compact('jobs', 'user', 'faculties', 'icons', 'category_counts'));
     }
@@ -315,9 +319,14 @@ class VacancyController extends Controller
      */
     public function companyDetail($id)
     {
-        // Cari perusahaan dengan relasi lowongan (eager loading)
-        // findOrFail akan menampilkan 404 jika perusahaan tidak ditemukan
-        $company = Company::with('vacancies')->findOrFail($id);
+        // Cari perusahaan dengan relasi lowongan (menggunakan cache)
+        // Cached query untuk performa optimal
+        $company = Company::getCachedCompany($id);
+
+        // Jika company tidak ditemukan, return 404
+        if (!$company) {
+            abort(404);
+        }
 
         return view('company-detail', compact('company'));
     }

@@ -43,8 +43,6 @@ class VacancyResource extends Resource
     {
         return [
             'index' => ListVacancies::route('/'),
-            'create' => CreateVacancy::route('/create'),
-            'edit' => EditVacancy::route('/{record}/edit'),
         ];
     }
 }

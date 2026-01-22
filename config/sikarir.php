@@ -68,4 +68,32 @@ return [
         'jobs_per_page' => 10,
         'welcome_jobs_limit' => 6,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pengaturan Cache
+    |--------------------------------------------------------------------------
+    | Konfigurasi untuk query caching di seluruh aplikasi.
+    | TTL (Time To Live) dalam satuan detik.
+    |
+    | Penggunaan: config('sikarir.cache.ttl.vacancies')
+    */
+    'cache' => [
+        // Cache key prefixes untuk organizing
+        'keys' => [
+            'vacancy_latest' => 'vacancy:latest',
+            'vacancy_category_counts' => 'vacancy:category_counts',
+            'vacancy_search' => 'vacancy:search',
+            'company_detail' => 'company:detail',
+            'faculties' => 'faculties:all',
+        ],
+
+        // Cache TTL (dalam detik)
+        'ttl' => [
+            'vacancies' => 3600,        // 1 jam - data lowongan
+            'companies' => 3600,        // 1 jam - data perusahaan
+            'categories' => 86400,      // 24 jam - data kategori (jarang berubah)
+            'search_results' => 1800,   // 30 menit - hasil pencarian
+        ],
+    ],
 ];

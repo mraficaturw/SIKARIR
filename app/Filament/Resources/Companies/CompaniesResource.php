@@ -43,8 +43,6 @@ class CompaniesResource extends Resource
     {
         return [
             'index' => ListCompanies::route('/'),
-            'create' => CreateCompanies::route('/create'),
-            'edit' => EditCompanies::route('/{record}/edit'),
         ];
     }
 }

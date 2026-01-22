@@ -1,0 +1,2 @@
+1. query caching
+2. perbaiki admin panel
