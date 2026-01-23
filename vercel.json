@@ -3,10 +3,9 @@
     "builds": [
         {
             "src": "/api/index.php",
-            "use": "vercel-php@0.7.2",
+            "use": "vercel-php@0.7.1",
             "config": {
-                "maxLambdaSize": "50mb",
-                "includeFiles": "public/**"
+                "maxLambdaSize": "50mb"
             }
         }
     ],
