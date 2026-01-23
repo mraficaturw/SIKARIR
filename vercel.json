@@ -36,6 +36,10 @@
         {
             "src": "/(.*)",
             "dest": "/api/index.php"
+        },
+        {
+            "src": "/favicon.ico",
+            "dest": "/public/favicon.ico"
         }
     ],
     "env": {
