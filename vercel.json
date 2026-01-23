@@ -34,12 +34,16 @@
             "dest": "/public/scss/$1"
         },
         {
-            "src": "/(.*)",
-            "dest": "/api/index.php"
+            "src": "/favicon.ico",
+            "dest": "/public/img/favicon.ico"
         },
         {
-            "src": "/favicon.ico",
-            "dest": "/public/favicon.ico"
+            "src": "/favicon.png",
+            "dest": "/public/img/favicon.ico"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/api/index.php"
         }
     ],
     "env": {
